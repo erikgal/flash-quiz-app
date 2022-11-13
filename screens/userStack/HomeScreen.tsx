@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react'
-import { ScrollView, StyleSheet, View } from 'react-native'
-import { ListItem } from '@react-native-material/core'
+import React, { useEffect, useState } from 'react'
+import { ScrollView, StyleSheet, View, Text } from 'react-native'
+import { ActivityIndicator, List } from 'react-native-paper'
 import { Quiz, RouterProps } from '../../types'
 import PlusButton from '../../components/buttons/PlusButton'
 import { RootState } from '../../store'
@@ -11,6 +11,7 @@ import 'react-native-get-random-values'
 import { db } from '../../firebaseConfig'
 import { collection, DocumentData, getDocs } from 'firebase/firestore'
 import { useAuthentication } from '../../utils/hooks/useAuthentication'
+import { COLORS } from '../../assets/colors'
 
 function formatQuizFromFirestore (doc: DocumentData, id: string): Quiz {
   const quiz = {
@@ -33,19 +34,19 @@ function formatQuizFromFirestore (doc: DocumentData, id: string): Quiz {
 }
 
 const HomeScreen: React.FC = ({ navigation }: RouterProps) => {
-  const quizList: Quiz[] = useSelector(
-    (state: RootState) => state.quiz.quizzes
-  )
+  const [loading, setLoading] = useState<boolean>(true)
+  const quizList: Quiz[] = useSelector((state: RootState) => state.quiz.quizzes)
   const { user } = useAuthentication()
 
   useEffect(() => {
     async function fetchData (): Promise<void> {
       const fetchedQuizzes: Quiz[] = []
       const querySnapshot = await getDocs(collection(db, `users/${user!.uid}/quizzes`))
-      querySnapshot.forEach((docx) => {
+      querySnapshot.forEach(docx => {
         fetchedQuizzes.push(formatQuizFromFirestore(docx.data(), docx.id))
       })
       dispatch(loadQuizzes(fetchedQuizzes))
+      setLoading(false)
     }
     if (user !== undefined) {
       void fetchData()
@@ -70,19 +71,36 @@ const HomeScreen: React.FC = ({ navigation }: RouterProps) => {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.scrollView}>
-        {quizList.map(quiz => {
-          return (
-            <ListItem
-              key={quiz.id}
-              title={quiz.title}
-              secondaryText={quiz.description}
-              onPress={() => handleQuizPress(quiz)}
-            ></ListItem>
+      {loading
+        ? (
+        <View style={styles.activityContainer}>
+          <ActivityIndicator size={45} color={COLORS.cyan} />
+        </View>
           )
-        })}
-      </ScrollView>
-    <PlusButton onPress={handleAdd} size = {70}/>
+        : quizList.length > 0
+          ? (
+        <ScrollView style={styles.scrollView}>
+          {quizList.map(quiz => {
+            return (
+              <List.Item
+                key={quiz.id}
+                title={quiz.title}
+                description={quiz.description}
+                onPress={() => handleQuizPress(quiz)}
+                style={styles.listItem}
+              ></List.Item>
+            )
+          })}
+        </ScrollView>
+            )
+          : (
+        <View style={styles.noContentContainer}>
+          <Text style={styles.noContentText}>{"You don't have any quizzes, create or download some!"}</Text>
+        </View>
+            )}
+      <View style={styles.buttonContainer}>
+        <PlusButton onPress={handleAdd} size={70} />
+      </View>
     </View>
   )
 }
@@ -90,9 +108,20 @@ const HomeScreen: React.FC = ({ navigation }: RouterProps) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center'
   },
-  scrollView: {},
+  buttonContainer: {
+    flex: 1,
+    width: '100%',
+    alignItems: 'flex-end',
+    justifyContent: 'flex-end'
+  },
+  scrollView: {
+    flex: 1,
+    width: '100%'
+  },
   plus: {
     position: 'absolute',
     right: 10,
@@ -101,6 +130,24 @@ const styles = StyleSheet.create({
   plusContainer: {
     height: 27,
     width: 27
+  },
+  listItem: {
+    borderWidth: 1,
+    borderColor: 'grey'
+  },
+  activityContainer: {
+    flex: 1,
+    justifyContent: 'center'
+  },
+  noContentContainer: {
+    flex: 1,
+    width: '85%',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  noContentText: {
+    fontSize: 18,
+    textAlign: 'center'
   }
 })
 
