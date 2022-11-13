@@ -3,6 +3,7 @@ import { Text, View } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import Icon from '@expo/vector-icons/Ionicons'
 import HomeScreen from '../screens/userStack/HomeScreen'
 import PreviewScreen from '../screens/userStack/PreviewScreen'
 import QuizScreen from '../screens/userStack/QuizScreen'
@@ -52,7 +53,22 @@ const Tab = createBottomTabNavigator()
 const UserStack: React.FC = () => {
   return (
     <NavigationContainer >
-      <Tab.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
+      <Tab.Navigator initialRouteName="Home" screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName
+
+          if (route.name === 'Home') {
+            iconName = 'home'
+          } else if (route.name === 'Store') {
+            iconName = 'cloud-download'
+          } else if (route.name === 'Profile') {
+            iconName = 'person'
+          }
+
+          return <Icon name={iconName} size={size} color={color} />
+        },
+        headerShown: false
+      })}>
         <Tab.Screen name="Home" component={HomeStackScreen} />
         <Tab.Screen name="Store" component={StoreStackScreen} />
         <Tab.Screen name="Profile" component={ProfileStackScreen} />
