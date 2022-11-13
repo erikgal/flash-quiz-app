@@ -26,7 +26,7 @@ function formatQuizFromFirestore (doc: DocumentData, id: string): Quiz {
     }),
     date: {
       nanoseconds: doc.date.nanoseconds,
-      seconds: doc.date.sconds
+      seconds: doc.date.seconds
     }
   }
   return quiz as Quiz
