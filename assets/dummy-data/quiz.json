@@ -1,0 +1,83 @@
+[
+    {
+        "title": "Florence",
+        "id": "a202047e-cf23-44c0-9512-789eae24187b",
+        "description": "A quiz about the basics of Florence",
+        "date": "12/9/2021",
+        "difficulty": 1,
+        "theme": "Culture",
+        "creatorId": "asd8f78as9df7",
+        "creatorName": "Erik Galler",
+        "questions": [
+            {
+                "question": "Florence is the capital of the xxx region.",
+                "answer": [
+                    ["Tuscany"]
+                ]
+            },
+            {
+                "question": "Florence is considered by many academics to have been the birthplace of the xxx.",
+                "answer": [
+                    ["Renaissance"]
+                ]
+            },
+            {
+                "question": "Florence originated as a xxx city, and was a center of medieval European xxx and xxx.",
+                "answer": [
+                    ["Roman"],
+                    [
+                        "trading",
+                        "banking"
+                    ],
+                    [
+                        "trade",
+                        "finance"
+                    ]
+                ]
+            },
+            {
+                "question": "From xxx to xxx the city served as the capital of the Kingdom of Italy (established in 1861).",
+                "answer": [
+                    ["1865"],
+                   ["1871"]
+                ]
+            },
+            {
+                "question": "xxx is the most significant industry in central Florence.",
+                "answer": [
+                   [ "Tourism"]
+                ]
+            }
+        ]
+    },
+    {
+        "title": "Neuroscience",
+        "id": "8asd7f98asd7f98",
+        "description": "Some neuroscience i want to remember from Andrew Hubermans podcast",
+        "date": "12/9/2021",
+        "difficulty": 2,
+        "theme": "Science",
+        "creatorId": "asd8f78as9df7",
+        "creatorName": "Erik Galler",
+        "questions": [
+            {
+                "question": "xxx is a neurotransmitter and hormone which regulates motivation.",
+                "answer": [
+                    ["Dopamine"]
+                ]
+            },
+            {
+                "question": "Epinephrine is also known as xxx",
+                "answer": [
+                    ["Adrenaline"]
+                ]
+            },
+            {
+                "question": "xxx is the chief neurotransmitter of the parasympathetic nervous system.",
+                "answer": [
+                    ["Acetylcholine"]
+                ]
+            }
+        ]
+    }
+]
