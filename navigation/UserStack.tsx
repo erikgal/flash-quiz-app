@@ -7,7 +7,7 @@ import HomeScreen from '../screens/userStack/home/HomeScreen'
 import PreviewScreen from '../screens/userStack/home/PreviewScreen'
 import QuizScreen from '../screens/userStack/home/QuizScreen'
 import SummaryScreen from '../screens/userStack/home/SummaryScreen'
-import ProfileScreen from '../screens/userStack/home/ProfileScreen'
+import ProfileScreen from '../screens/userStack/profile/ProfileScreen'
 import StoreScreen from '../screens/userStack/store/StoreScreen'
 
 const HomeStack = createNativeStackNavigator()
