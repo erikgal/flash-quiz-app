@@ -3,12 +3,12 @@ import { SafeAreaView, StyleSheet, View, TouchableOpacity } from 'react-native'
 import Icon from '@expo/vector-icons/MaterialCommunityIcons'
 import { COLORS } from '../../assets/colors'
 
-interface PlusButtonProps {
+interface DownloadButtonProps {
   onPress: () => void
   size: number
 }
 
-const PlusButton: React.FC<PlusButtonProps> = ({ onPress, size }: PlusButtonProps) => {
+const DownloadButton: React.FC<DownloadButtonProps> = ({ onPress, size }: DownloadButtonProps) => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -38,7 +38,7 @@ const PlusButton: React.FC<PlusButtonProps> = ({ onPress, size }: PlusButtonProp
       <SafeAreaView>
         <View style={styles.container}>
           <TouchableOpacity onPress={onPress} style={styles.roundButton}>
-            <Icon name="plus" style={styles.icon} />
+            <Icon name="upload" style={styles.icon} />
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -46,4 +46,4 @@ const PlusButton: React.FC<PlusButtonProps> = ({ onPress, size }: PlusButtonProp
   )
 }
 
-export default PlusButton
+export default DownloadButton

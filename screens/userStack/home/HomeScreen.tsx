@@ -1,37 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import { ScrollView, StyleSheet, View, Text } from 'react-native'
 import { ActivityIndicator, List } from 'react-native-paper'
-import { Quiz, RouterProps } from '../../types'
-import PlusButton from '../../components/buttons/PlusButton'
-import { RootState } from '../../store'
+import { Quiz, RouterProps } from '../../../types'
+import PlusButton from '../../../components/buttons/PlusButton'
+import { RootState } from '../../../store'
 import { useDispatch, useSelector } from 'react-redux'
-import { loadQuizzes, setCurrentQuiz } from '../../utils/redux/quizSlice'
+import { loadQuizzes, setCurrentQuiz } from '../../../utils/redux/quizSlice'
 import 'react-native-get-random-values'
 // import { v4 as uuidv4 } from 'uuid'
-import { db } from '../../firebaseConfig'
-import { collection, DocumentData, getDocs } from 'firebase/firestore'
-import { useAuthentication } from '../../utils/hooks/useAuthentication'
-import { COLORS } from '../../assets/colors'
-
-function formatQuizFromFirestore (doc: DocumentData, id: string): Quiz {
-  const quiz = {
-    ...doc,
-    id,
-    questions: doc.questions.map(questionObj => {
-      return {
-        ...questionObj,
-        answer: questionObj.answer.map(subAnswer => {
-          return Object.values(subAnswer)
-        })
-      }
-    }),
-    date: {
-      nanoseconds: doc.date.nanoseconds,
-      seconds: doc.date.seconds
-    }
-  }
-  return quiz as Quiz
-}
+import { db } from '../../../firebaseConfig'
+import { collection, getDocs } from 'firebase/firestore'
+import { useAuthentication } from '../../../utils/hooks/useAuthentication'
+import { COLORS } from '../../../assets/colors'
+import formatQuizFromFirestore from '../../../utils/functions/formatQuizFromFirestore'
 
 const HomeScreen: React.FC = ({ navigation }: RouterProps) => {
   const [loading, setLoading] = useState<boolean>(true)

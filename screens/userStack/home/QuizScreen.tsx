@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View, Text, TextInput, Keyboard } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
-import RoundButton from '../../components/buttons/RoundButton'
-import { RootState } from '../../store'
-import { saveUserAnswers } from '../../utils/redux/quizSlice'
+import RoundButton from '../../../components/buttons/RoundButton'
+import { RootState } from '../../../store'
+import { saveUserAnswers } from '../../../utils/redux/quizSlice'
 
-import { Quiz, Question, RouterProps, InputMap } from '../../types'
+import { Quiz, Question, RouterProps, InputMap } from '../../../types'
 
 function getNumberOfChars (index: number, question: Question): number {
   const inputIndexArray: number[] = []

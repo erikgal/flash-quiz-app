@@ -1,9 +1,9 @@
-import Button from '../../components/buttons/RoundButton'
+import Button from '../../../components/buttons/RoundButton'
 import React, { useEffect } from 'react'
 import { StyleSheet, View, Text, ScrollView } from 'react-native'
-import { Quiz, RouterProps, UserAnswers } from '../../types'
+import { Quiz, RouterProps, UserAnswers } from '../../../types'
 import { StackActions } from '@react-navigation/native'
-import { RootState } from '../../store'
+import { RootState } from '../../../store'
 import { useSelector } from 'react-redux'
 
 const SummaryScreen: React.FC = ({ navigation }: RouterProps) => {

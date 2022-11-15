@@ -1,9 +1,9 @@
 import React from 'react'
 import { StyleSheet, View, Text } from 'react-native'
 import { useSelector } from 'react-redux'
-import { RootState } from '../../store'
-import { Difficulties, Quiz, RouterProps } from '../../types'
-import Button from '../../components/buttons/RoundButton'
+import { RootState } from '../../../store'
+import { Difficulties, Quiz, RouterProps } from '../../../types'
+import Button from '../../../components/buttons/RoundButton'
 import { Timestamp } from 'firebase/firestore'
 
 const PreviewScreen: React.FC = ({ navigation }: RouterProps) => {

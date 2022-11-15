@@ -1,22 +1,14 @@
 import React from 'react'
-import { Text, View } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import Icon from '@expo/vector-icons/Ionicons'
-import HomeScreen from '../screens/userStack/HomeScreen'
-import PreviewScreen from '../screens/userStack/PreviewScreen'
-import QuizScreen from '../screens/userStack/QuizScreen'
-import SummaryScreen from '../screens/userStack/SummaryScreen'
-import ProfileScreen from '../screens/userStack/ProfileScreen'
-
-const StoreScreen: React.FC = () => {
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Store Screen</Text>
-    </View>
-  )
-}
+import HomeScreen from '../screens/userStack/home/HomeScreen'
+import PreviewScreen from '../screens/userStack/home/PreviewScreen'
+import QuizScreen from '../screens/userStack/home/QuizScreen'
+import SummaryScreen from '../screens/userStack/home/SummaryScreen'
+import ProfileScreen from '../screens/userStack/home/ProfileScreen'
+import StoreScreen from '../screens/userStack/store/StoreScreen'
 
 const HomeStack = createNativeStackNavigator()
 const HomeStackScreen: React.FC = () => {
