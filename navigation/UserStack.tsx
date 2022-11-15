@@ -4,18 +4,19 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import Icon from '@expo/vector-icons/Ionicons'
 import HomeScreen from '../screens/userStack/home/HomeScreen'
-import PreviewScreen from '../screens/userStack/home/PreviewScreen'
+import HomePreviewScreen from '../screens/userStack/home/HomePreviewScreen'
 import QuizScreen from '../screens/userStack/home/QuizScreen'
 import SummaryScreen from '../screens/userStack/home/SummaryScreen'
 import ProfileScreen from '../screens/userStack/profile/ProfileScreen'
 import StoreScreen from '../screens/userStack/store/StoreScreen'
+import StorePreviewScreen from '../screens/userStack/store/StorePreviewScreen'
 
 const HomeStack = createNativeStackNavigator()
 const HomeStackScreen: React.FC = () => {
   return (
     <HomeStack.Navigator>
       <HomeStack.Screen name="HomeScreen" options={{ title: 'Home' }} component={HomeScreen} />
-      <HomeStack.Screen name="PreviewScreen" options={{ title: 'Preview' }} component={PreviewScreen}/>
+      <HomeStack.Screen name="HomePreviewScreen" options={{ title: 'Preview' }} component={HomePreviewScreen}/>
       <HomeStack.Screen name="QuizScreen" options={{ title: 'Quiz' }} component={QuizScreen}/>
       <HomeStack.Screen name="SummaryScreen" options={{ title: 'Summary', headerBackVisible: false }} component={SummaryScreen}/>
     </HomeStack.Navigator>
@@ -27,6 +28,7 @@ const StoreStackScreen: React.FC = () => {
   return (
     <StoreStack.Navigator>
       <StoreStack.Screen name="StoreScreen" options={{ title: 'Store' }} component={StoreScreen} />
+      <StoreStack.Screen name="StorePreviewScreen" options={{ title: 'Preview' }} component={StorePreviewScreen} />
     </StoreStack.Navigator>
   )
 }

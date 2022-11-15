@@ -42,12 +42,12 @@ const HomeScreen: React.FC = ({ navigation }: RouterProps) => {
 
   const handleQuizPress = (quiz: Quiz): void => {
     dispatch(setCurrentQuiz(quiz))
-    navigation.navigate('PreviewScreen')
+    navigation.navigate('HomePreviewScreen')
   }
 
   const handleAdd = (): void => {
     // TODO add function to create new quiz here
-    navigation.navigate('PreviewScreen')
+    navigation.navigate('HomePreviewScreen')
   }
 
   return (

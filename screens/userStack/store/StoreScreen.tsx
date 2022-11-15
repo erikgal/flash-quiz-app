@@ -1,16 +1,19 @@
 import { collection, getDocs } from 'firebase/firestore'
 import React, { useEffect, useState } from 'react'
-import { View, Text, ActivityIndicator, StyleSheet, ScrollView } from 'react-native'
+import { View, ActivityIndicator, StyleSheet, FlatList } from 'react-native'
 import { List } from 'react-native-paper'
+import { useDispatch } from 'react-redux'
 import { COLORS } from '../../../assets/colors'
 import DownloadButton from '../../../components/buttons/DownloadButton'
 import { db } from '../../../firebaseConfig'
-import { Quiz } from '../../../types'
+import { Quiz, RouterProps } from '../../../types'
 import formatQuizFromFirestore from '../../../utils/functions/formatQuizFromFirestore'
+import { setCurrentQuiz } from '../../../utils/redux/storeSlice'
 
-const StoreScreen: React.FC = () => {
+const StoreScreen: React.FC = ({ navigation }: RouterProps) => {
   const [loading, setLoading] = useState<boolean>(true)
   const [quizList, setQuizList] = useState<Quiz[]>([])
+  const dispatch = useDispatch()
 
   useEffect(() => {
     async function fetchData (): Promise<void> {
@@ -25,39 +28,42 @@ const StoreScreen: React.FC = () => {
     void fetchData()
   }, [])
 
+  const handleQuizPress = (quiz: Quiz): void => {
+    dispatch(setCurrentQuiz(quiz))
+    navigation.navigate('StorePreviewScreen')
+  }
+
+  const renderItem = ({ item }): JSX.Element => (
+    <List.Item
+      key={item.id}
+      title={item.title}
+      description={item.description}
+      onPress={() => handleQuizPress(item)}
+      style={styles.listItem}
+    />
+  )
+
   return (
     <View style={styles.container}>
-    {loading
-      ? (
-      <View style={styles.activityContainer}>
-        <ActivityIndicator size={45} color={COLORS.cyan} />
-      </View>
-        )
-      : quizList.length > 0
+      {loading
         ? (
-      <ScrollView style={styles.scrollView}>
-        {quizList.map(quiz => {
-          return (
-            <List.Item
-              key={quiz.id}
-              title={quiz.title}
-              description={quiz.description}
-              onPress={() => console.log('yo')}
-              style={styles.listItem}
-            ></List.Item>
+        <View style={styles.activityContainer}>
+          <ActivityIndicator size={45} color={COLORS.cyan} />
+        </View>
           )
-        })}
-      </ScrollView>
-          )
-        : (
-      <View style={styles.noContentContainer}>
-        <Text style={styles.noContentText}>{"You don't have any quizzes, create or download some!"}</Text>
-      </View>
+        : quizList.length > 0 &&
+          (
+        <FlatList
+          style={styles.flatList}
+          data={quizList}
+          renderItem={renderItem}
+          keyExtractor={item => item.id}
+        />
           )}
-    <View style={styles.buttonContainer}>
-      <DownloadButton onPress={() => console.log('hei')} size={70} />
+      <View style={styles.buttonContainer}>
+        <DownloadButton onPress={() => console.log('hei')} size={70} />
+      </View>
     </View>
-  </View>
   )
 }
 
@@ -74,7 +80,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     justifyContent: 'flex-end'
   },
-  scrollView: {
+  flatList: {
     flex: 1,
     width: '100%'
   },

@@ -6,11 +6,11 @@ import { Difficulties, Quiz, RouterProps } from '../../../types'
 import Button from '../../../components/buttons/RoundButton'
 import { Timestamp } from 'firebase/firestore'
 
-const PreviewScreen: React.FC = ({ navigation }: RouterProps) => {
-  const quiz: Quiz | null = useSelector((state: RootState) => state.quiz.currentQuiz)
+const StorePreviewScreen: React.FC = ({ navigation }: RouterProps) => {
+  const quiz: Quiz | null = useSelector((state: RootState) => state.store.currentQuiz)
 
-  const handleStart = (): void => {
-    navigation.navigate('QuizScreen')
+  const handleDownload = (): void => {
+    // TODO
   }
 
   return (
@@ -30,14 +30,18 @@ const PreviewScreen: React.FC = ({ navigation }: RouterProps) => {
               <Text style={styles.description}>{quiz.description}</Text>
             </View>
             <View style={styles.textBottom}>
-              <Text style={styles.theme}>{`Theme: ${quiz.theme}`}</Text>
-              <Text style={styles.theme}>{`Difficulty: ${
-                Object.values(Difficulties)[quiz.difficulty]
-              }`}</Text>
+              <View style={{ flexDirection: 'row' }}>
+                <Text style={styles.themeDiff}>{'Theme: '}</Text>
+                <Text style={styles.theme}>{quiz.theme}</Text>
+              </View>
+              <View style={{ flexDirection: 'row' }}>
+                <Text style={styles.themeDiff}>{'Difficulty: '}</Text>
+                <Text style={styles.theme}>{Object.values(Difficulties)[quiz.difficulty]}</Text>
+              </View>
             </View>
           </View>
           <View style={styles.settings}>
-            <Button text={'Start'} onPress={handleStart}></Button>
+            <Button text={'Download'} onPress={handleDownload}></Button>
           </View>
         </View>
           )
@@ -86,6 +90,10 @@ const styles = StyleSheet.create({
     // borderWidth: 2,
     // borderColor: 'green'
   },
+  themeDiff: {
+    fontSize: 20,
+    fontWeight: 'bold'
+  },
   theme: {
     fontSize: 20
   },
@@ -101,4 +109,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default PreviewScreen
+export default StorePreviewScreen
