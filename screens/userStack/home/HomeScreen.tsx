@@ -9,26 +9,31 @@ import { loadQuizzes, setCurrentQuiz } from '../../../utils/redux/quizSlice'
 import 'react-native-get-random-values'
 // import { v4 as uuidv4 } from 'uuid'
 import { db } from '../../../firebaseConfig'
-import { collection, getDocs } from 'firebase/firestore'
+import { collection, deleteDoc, doc, getDocs } from 'firebase/firestore'
 import { useAuthentication } from '../../../utils/hooks/useAuthentication'
 import { COLORS } from '../../../assets/colors'
 import formatQuizFromFirestore from '../../../utils/functions/formatQuizFromFirestore'
+import CancelEditDeleteModal from '../../../components/modals/CancelEditDeleteModal'
+import wrapAsyncFunction from '../../../utils/functions/wrapAsyncFunction'
 
 const HomeScreen: React.FC = ({ navigation }: RouterProps) => {
   const [loading, setLoading] = useState<boolean>(true)
+  const [visible, setVisible] = React.useState(false)
+  const [longPressQuiz, setLongPressQuiz] = useState<Quiz>()
   const quizList: Quiz[] = useSelector((state: RootState) => state.quiz.quizzes)
   const { user } = useAuthentication()
 
+  async function fetchData (): Promise<void> {
+    const fetchedQuizzes: Quiz[] = []
+    const querySnapshot = await getDocs(collection(db, `users/${user!.uid}/quizzes`))
+    querySnapshot.forEach(docx => {
+      fetchedQuizzes.push(formatQuizFromFirestore(docx.data(), docx.id))
+    })
+    dispatch(loadQuizzes(fetchedQuizzes))
+    setLoading(false)
+  }
+
   useEffect(() => {
-    async function fetchData (): Promise<void> {
-      const fetchedQuizzes: Quiz[] = []
-      const querySnapshot = await getDocs(collection(db, `users/${user!.uid}/quizzes`))
-      querySnapshot.forEach(docx => {
-        fetchedQuizzes.push(formatQuizFromFirestore(docx.data(), docx.id))
-      })
-      dispatch(loadQuizzes(fetchedQuizzes))
-      setLoading(false)
-    }
     if (user !== undefined) {
       void fetchData()
     }
@@ -43,6 +48,17 @@ const HomeScreen: React.FC = ({ navigation }: RouterProps) => {
   const handleQuizPress = (quiz: Quiz): void => {
     dispatch(setCurrentQuiz(quiz))
     navigation.navigate('HomePreviewScreen')
+  }
+
+  const handleLongPress = (quiz: Quiz): void => {
+    setVisible(true)
+    setLongPressQuiz(quiz)
+  }
+
+  const handleDelete = async (): Promise<void> => {
+    await deleteDoc(doc(db, `users/${user!.uid}/quizzes/${longPressQuiz!.id}`))
+    void fetchData()
+    setVisible(false)
   }
 
   const handleAdd = (): void => {
@@ -67,6 +83,7 @@ const HomeScreen: React.FC = ({ navigation }: RouterProps) => {
                 title={quiz.title}
                 description={quiz.description}
                 onPress={() => handleQuizPress(quiz)}
+                onLongPress={() => handleLongPress(quiz)}
                 style={styles.listItem}
               ></List.Item>
             )
@@ -78,6 +95,13 @@ const HomeScreen: React.FC = ({ navigation }: RouterProps) => {
           <Text style={styles.noContentText}>{"You don't have any quizzes, create or download some!"}</Text>
         </View>
             )}
+      <CancelEditDeleteModal
+        onDismiss={() => setVisible(false)}
+        visible={visible}
+        quizName={(longPressQuiz != null) ? longPressQuiz.title : ''}
+        onCancel={() => setVisible(false)}
+        onDelete={wrapAsyncFunction(handleDelete)}
+      />
       <View style={styles.buttonContainer}>
         <PlusButton onPress={handleAdd} size={70} />
       </View>

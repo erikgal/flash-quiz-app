@@ -181,6 +181,7 @@ const QuizScreen: React.FC = ({ navigation }: RouterProps) => {
             }
             onPress={corrections.length === 0 ? handleSubmit : handleNext}
             disabled={Object.values(userAnswers).every(value => value === '')}
+            loading={false}
           />
         </>
       )}

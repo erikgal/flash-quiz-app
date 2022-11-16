@@ -18,22 +18,22 @@ const StorePreviewScreen: React.FC = ({ navigation }: RouterProps) => {
   useEffect(() => {
     async function fetchData (): Promise<void> {
       const document = await getDoc(doc(db, `users/${user!.uid}/quizzes/${quiz!.id}`))
-      setIsDownloaded(document !== undefined)
+      setIsDownloaded(document.data() !== undefined)
     }
     if (user != null) {
       void fetchData()
     }
   }, [user])
 
-  console.log(isDownloaded)
-
   const handleDownload = async (): Promise<void> => {
     setLoading(true)
     const docSnap = await getDoc(doc(db, `store/${quiz!.id}`))
     if (docSnap.exists() && user != null) {
       await setDoc(doc(db, `users/${user.uid}/quizzes`, quiz!.id), docSnap.data())
+      setIsDownloaded(true)
     } else {
       console.log('No such document!')
+      setIsDownloaded(false)
     }
     setLoading(false)
   }

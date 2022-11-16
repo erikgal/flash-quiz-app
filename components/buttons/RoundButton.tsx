@@ -7,7 +7,7 @@ interface RoundButtonProps {
   text: string
   onPress: () => void
   disabled: boolean
-  loading?: boolean
+  loading: boolean
 }
 
 const RoundButton: React.FC<RoundButtonProps> = ({ text, onPress, disabled, loading }: RoundButtonProps) => {

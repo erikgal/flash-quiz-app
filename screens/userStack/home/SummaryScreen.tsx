@@ -48,10 +48,7 @@ const SummaryScreen: React.FC = ({ navigation }: RouterProps) => {
                 if (word.includes('xxx')) {
                   answerCounter += 1
                   return (
-                    <Text
-                      key={j}
-                      style={[styles.word, { color: corrections[i][answerCounter - 1] ? 'green' : 'red' }]}
-                    >
+                    <Text key={j} style={[styles.word, { color: corrections[i][answerCounter - 1] ? 'green' : 'red' }]}>
                       {userAnswers[i][j] !== '' ? userAnswers[i][j] : '__'}
                     </Text>
                   )
@@ -96,7 +93,7 @@ const SummaryScreen: React.FC = ({ navigation }: RouterProps) => {
           </View>
         </View>
         <View style={styles.settings}>
-          <Button text={'Close'} onPress={handleClose} disabled={false}></Button>
+          <Button text={'Close'} onPress={handleClose} disabled={false} loading={false}></Button>
         </View>
       </View>
     </>
