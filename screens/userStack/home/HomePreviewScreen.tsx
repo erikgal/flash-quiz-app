@@ -3,7 +3,7 @@ import { StyleSheet, View, Text } from 'react-native'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../store'
 import { Difficulties, Quiz, RouterProps } from '../../../types'
-import Button from '../../../components/buttons/RoundButton'
+import RoundButton from '../../../components/buttons/RoundButton'
 import { Timestamp } from 'firebase/firestore'
 
 const HomePreviewScreen: React.FC = ({ navigation }: RouterProps) => {
@@ -41,7 +41,7 @@ const HomePreviewScreen: React.FC = ({ navigation }: RouterProps) => {
             </View>
           </View>
           <View style={styles.settings}>
-            <Button text={'Start'} onPress={handleStart}></Button>
+            <RoundButton text={'Start'} onPress={handleStart} loading={false} disabled = {false}></RoundButton>
           </View>
         </View>
           )

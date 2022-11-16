@@ -1,16 +1,41 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { StyleSheet, View, Text } from 'react-native'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../store'
 import { Difficulties, Quiz, RouterProps } from '../../../types'
 import Button from '../../../components/buttons/RoundButton'
-import { Timestamp } from 'firebase/firestore'
+import { doc, getDoc, setDoc, Timestamp } from 'firebase/firestore'
+import { db } from '../../../firebaseConfig'
+import { useAuthentication } from '../../../utils/hooks/useAuthentication'
+import wrapAsyncFunction from '../../../utils/functions/wrapAsyncFunction'
 
 const StorePreviewScreen: React.FC = ({ navigation }: RouterProps) => {
   const quiz: Quiz | null = useSelector((state: RootState) => state.store.currentQuiz)
+  const [loading, setLoading] = useState<boolean>(false)
+  const [isDownloaded, setIsDownloaded] = useState<boolean>(false)
+  const { user } = useAuthentication()
 
-  const handleDownload = (): void => {
-    // TODO
+  useEffect(() => {
+    async function fetchData (): Promise<void> {
+      const document = await getDoc(doc(db, `users/${user!.uid}/quizzes/${quiz!.id}`))
+      setIsDownloaded(document !== undefined)
+    }
+    if (user != null) {
+      void fetchData()
+    }
+  }, [user])
+
+  console.log(isDownloaded)
+
+  const handleDownload = async (): Promise<void> => {
+    setLoading(true)
+    const docSnap = await getDoc(doc(db, `store/${quiz!.id}`))
+    if (docSnap.exists() && user != null) {
+      await setDoc(doc(db, `users/${user.uid}/quizzes`, quiz!.id), docSnap.data())
+    } else {
+      console.log('No such document!')
+    }
+    setLoading(false)
   }
 
   return (
@@ -27,6 +52,9 @@ const StorePreviewScreen: React.FC = ({ navigation }: RouterProps) => {
               )
                 .toDate()
                 .toDateString()}`}</Text>
+              <Text style={styles.download}>
+                {isDownloaded ? 'Downloaded' : ''}
+              </Text>
               <Text style={styles.description}>{quiz.description}</Text>
             </View>
             <View style={styles.textBottom}>
@@ -41,7 +69,7 @@ const StorePreviewScreen: React.FC = ({ navigation }: RouterProps) => {
             </View>
           </View>
           <View style={styles.settings}>
-            <Button text={'Download'} onPress={handleDownload}></Button>
+            <Button text={'Download'} loading={loading} onPress={wrapAsyncFunction(handleDownload)} disabled={isDownloaded}></Button>
           </View>
         </View>
           )
@@ -78,6 +106,10 @@ const styles = StyleSheet.create({
   creatorDate: {
     fontSize: 12,
     padding: 3
+  },
+  download: {
+    fontSize: 15,
+    color: 'green'
   },
   description: {
     fontSize: 15

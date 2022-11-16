@@ -1,26 +1,26 @@
 import React from 'react'
-import {
-  SafeAreaView,
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity
-} from 'react-native'
+import { SafeAreaView, StyleSheet, View, Text, TouchableOpacity } from 'react-native'
+import { ActivityIndicator } from 'react-native-paper'
 import { COLORS } from '../../assets/colors'
 
 interface RoundButtonProps {
   text: string
   onPress: () => void
-  disabled?: boolean
+  disabled: boolean
+  loading?: boolean
 }
 
-const RoundButton: React.FC<RoundButtonProps> = ({ text, onPress, disabled }: RoundButtonProps) => {
+const RoundButton: React.FC<RoundButtonProps> = ({ text, onPress, disabled, loading }: RoundButtonProps) => {
   return (
     <>
       <SafeAreaView>
         <View style={styles.container}>
-          <TouchableOpacity onPress={onPress} style={styles.button} disabled={disabled !== undefined && disabled}>
-            <Text style={styles.buttonText}>{text}</Text>
+          <TouchableOpacity onPress={onPress} style={[styles.button, { backgroundColor: disabled ? 'grey' : COLORS.cyan }]} disabled={disabled !== undefined && disabled}>
+            <View style={styles.innerButtonContainer}>
+              <ActivityIndicator style={styles.activityIndicator} animating={false} color={'white'} />
+              <Text style={styles.buttonText}>{text}</Text>
+              <ActivityIndicator style={styles.activityIndicator} animating={loading} color={'white'} />
+            </View>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -38,6 +38,7 @@ const styles = StyleSheet.create({
   },
   button: {
     flex: 1,
+    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: COLORS.cyan,
@@ -46,6 +47,23 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontSize: 20
+  },
+  innerButtonContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'stretch'
+  },
+  activityContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'stretch',
+    borderWidth: 2,
+    borderColor: 'red'
+  },
+  activityIndicator: {
+    paddingRight: 8
   }
 })
 

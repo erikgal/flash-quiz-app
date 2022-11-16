@@ -96,7 +96,7 @@ const SummaryScreen: React.FC = ({ navigation }: RouterProps) => {
           </View>
         </View>
         <View style={styles.settings}>
-          <Button text={'Close'} onPress={handleClose}></Button>
+          <Button text={'Close'} onPress={handleClose} disabled={false}></Button>
         </View>
       </View>
     </>

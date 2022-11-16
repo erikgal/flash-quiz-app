@@ -18,7 +18,7 @@ const StoreScreen: React.FC = ({ navigation }: RouterProps) => {
   useEffect(() => {
     async function fetchData (): Promise<void> {
       const fetchedQuizzes: Quiz[] = []
-      const querySnapshot = await getDocs(collection(db, 'users/OLml9cQ08DMHY1c0KU7yRcCTGaS2/quizzes'))
+      const querySnapshot = await getDocs(collection(db, 'store'))
       querySnapshot.forEach(docx => {
         fetchedQuizzes.push(formatQuizFromFirestore(docx.data(), docx.id))
       })
