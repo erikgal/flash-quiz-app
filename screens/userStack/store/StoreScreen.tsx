@@ -61,7 +61,7 @@ const StoreScreen: React.FC = ({ navigation }: RouterProps) => {
         />
           )}
       <View style={styles.buttonContainer}>
-        <DownloadButton onPress={() => console.log('hei')} size={70} />
+        <DownloadButton onPress={() => console.log('')} size={70} />
       </View>
     </View>
   )

@@ -9,7 +9,7 @@ import { loadQuizzes, setCurrentQuiz } from '../../../utils/redux/quizSlice'
 import 'react-native-get-random-values'
 // import { v4 as uuidv4 } from 'uuid'
 import { db } from '../../../firebaseConfig'
-import { collection, deleteDoc, doc, getDocs } from 'firebase/firestore'
+import { collection, deleteDoc, doc, getDocs, onSnapshot } from 'firebase/firestore'
 import { useAuthentication } from '../../../utils/hooks/useAuthentication'
 import { COLORS } from '../../../assets/colors'
 import formatQuizFromFirestore from '../../../utils/functions/formatQuizFromFirestore'
@@ -23,7 +23,7 @@ const HomeScreen: React.FC = ({ navigation }: RouterProps) => {
   const quizList: Quiz[] = useSelector((state: RootState) => state.quiz.quizzes)
   const { user } = useAuthentication()
 
-  async function fetchData (): Promise<void> {
+  async function initialFetch (): Promise<void> {
     const fetchedQuizzes: Quiz[] = []
     const querySnapshot = await getDocs(collection(db, `users/${user!.uid}/quizzes`))
     querySnapshot.forEach(docx => {
@@ -35,7 +35,15 @@ const HomeScreen: React.FC = ({ navigation }: RouterProps) => {
 
   useEffect(() => {
     if (user !== undefined) {
-      void fetchData()
+      if (quizList.length === 0) {
+        void initialFetch()
+      }
+      // real time update
+      onSnapshot(collection(db, `users/${user.uid}/quizzes`), (snapshot) => {
+        dispatch(loadQuizzes(snapshot.docs.map((docx) =>
+          formatQuizFromFirestore(docx.data(), docx.id)
+        )))
+      })
     }
   }, [user])
 
@@ -56,9 +64,8 @@ const HomeScreen: React.FC = ({ navigation }: RouterProps) => {
   }
 
   const handleDelete = async (): Promise<void> => {
-    await deleteDoc(doc(db, `users/${user!.uid}/quizzes/${longPressQuiz!.id}`))
-    void fetchData()
     setVisible(false)
+    await deleteDoc(doc(db, `users/${user!.uid}/quizzes/${longPressQuiz!.id}`))
   }
 
   const handleAdd = (): void => {
