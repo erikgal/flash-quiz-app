@@ -8,29 +8,26 @@ import {
 import { Modal } from 'react-native-paper'
 import { COLORS } from '../../assets/colors'
 
-interface CancelEditDeleteModalProps {
+interface AreYouSureUploadModalProps {
   visible: boolean
   onDismiss: () => void
-  quizName: string
+  action: string
   onCancel: () => void
-  onDelete: () => void
+  onUpload: () => void
 }
 
-const CancelEditDeleteModal: React.FC<CancelEditDeleteModalProps> = ({ visible, onDismiss, quizName, onCancel, onDelete }: CancelEditDeleteModalProps) => {
+const AreYouSureUploadModal: React.FC<AreYouSureUploadModalProps> = ({ visible, onDismiss, action, onCancel, onUpload }: AreYouSureUploadModalProps) => {
   return (
     <Modal visible={visible} onDismiss={onDismiss} contentContainerStyle={styles.containerStyle}>
     <View style={styles.modalContainerText}>
-      <Text style={styles.modalText}>{`What do you want to do with the ${quizName} quiz?`}</Text>
+      <Text style={styles.modalText}>{`Are you sure you want to ${action}?`}</Text>
     </View>
     <View style={styles.modalButtons}>
-      <TouchableOpacity style={[styles.modalActions, { borderBottomLeftRadius: 20 }]} onPress={onCancel}>
+      <TouchableOpacity style={[styles.modalActions, { borderBottomLeftRadius: 20, borderRightWidth: 1 }]} onPress={onCancel}>
         <Text style = {styles.actionText}>Cancel</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={[styles.modalActions, { borderRightWidth: 1, borderLeftWidth: 1 }]}>
-        <Text style = {styles.actionText}>Edit</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={[styles.modalActions, { borderBottomRightRadius: 20 }]} onPress={onDelete}>
-        <Text style = {styles.actionText}>Delete</Text>
+      <TouchableOpacity style={[styles.modalActions, { borderBottomRightRadius: 20 }]} onPress={onUpload}>
+        <Text style = {styles.actionText}>Upload</Text>
       </TouchableOpacity>
     </View>
   </Modal>
@@ -50,6 +47,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: 'bold',
     padding: 12
+
   },
   modalContainerText: {
     flex: 2,
@@ -78,4 +76,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default CancelEditDeleteModal
+export default AreYouSureUploadModal

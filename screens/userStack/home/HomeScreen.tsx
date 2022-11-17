@@ -16,10 +16,12 @@ import formatQuizFromFirestore from '../../../utils/functions/formatQuizFromFire
 import CancelEditDeleteModal from '../../../components/modals/CancelEditDeleteModal'
 import wrapAsyncFunction from '../../../utils/functions/wrapAsyncFunction'
 import QuizList from '../../../components/list/QuizList'
+import AreYouSureModal from '../../../components/modals/AreYouSureDeleteModal'
 
 const HomeScreen: React.FC = ({ navigation }: RouterProps) => {
   const [loading, setLoading] = useState<boolean>(true)
   const [visible, setVisible] = React.useState(false)
+  const [visibleDelete, setVisibleDelete] = React.useState(false)
   const [longPressQuiz, setLongPressQuiz] = useState<Quiz>()
   const quizList: Quiz[] = useSelector((state: RootState) => state.quiz.quizzes)
   const { user } = useAuthentication()
@@ -65,8 +67,13 @@ const HomeScreen: React.FC = ({ navigation }: RouterProps) => {
   }
 
   const handleDelete = async (): Promise<void> => {
-    setVisible(false)
+    setVisibleDelete(false)
     await deleteDoc(doc(db, `users/${user!.uid}/quizzes/${longPressQuiz!.id}`))
+  }
+
+  const handlePressDelete = (): void => {
+    setVisible(false)
+    setVisibleDelete(true)
   }
 
   const handleAdd = (): void => {
@@ -100,7 +107,14 @@ const HomeScreen: React.FC = ({ navigation }: RouterProps) => {
         visible={visible}
         quizName={(longPressQuiz != null) ? longPressQuiz.title : ''}
         onCancel={() => setVisible(false)}
-        onDelete={wrapAsyncFunction(handleDelete)}
+        onDelete={handlePressDelete}
+      />
+      <AreYouSureModal
+      onDismiss={() => setVisibleDelete(false)}
+      visible={visibleDelete}
+      onCancel={() => setVisibleDelete(false)}
+      onDelete = {wrapAsyncFunction(handleDelete)}
+      action= {'delete this quiz'}
       />
     </View>
   )

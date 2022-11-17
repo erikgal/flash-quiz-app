@@ -12,10 +12,13 @@ import formatQuizFromFirestore from '../../../utils/functions/formatQuizFromFire
 import formatQuizToFirestore from '../../../utils/functions/formatQuizToFirestore'
 import wrapAsyncFunction from '../../../utils/functions/wrapAsyncFunction'
 import QuizList from '../../../components/list/QuizList'
+import AreYouSureUploadModal from '../../../components/modals/AreYouSureUploadModal'
 
 const UploadScreen: React.FC = ({ navigation }: RouterProps) => {
   const [loading, setLoading] = useState<boolean>(true)
   const [quizList, setQuizList] = useState<Quiz[]>([])
+  const [uploadVisible, setUploadVisible] = useState(false)
+  const [selectedQuiz, setSelectedQuiz] = useState<Quiz>()
   const [visible, setVisible] = useState(false)
   const { user } = useAuthentication()
 
@@ -53,9 +56,15 @@ const UploadScreen: React.FC = ({ navigation }: RouterProps) => {
   }, [user])
 
   const handleQuizPress = async (quiz: Quiz): Promise<void> => {
-    const firestoreQuiz = formatQuizToFirestore(quiz)
-    await setDoc(doc(db, 'store', quiz.id), firestoreQuiz)
+    setSelectedQuiz(quiz)
+    setUploadVisible(true)
+  }
+
+  const handleUpload = async (): Promise<void> => {
+    const firestoreQuiz = formatQuizToFirestore(selectedQuiz!)
+    await setDoc(doc(db, 'store', selectedQuiz!.id), firestoreQuiz)
     void fetchQuizzes()
+    setUploadVisible(false)
     setVisible(true)
   }
 
@@ -70,7 +79,7 @@ const UploadScreen: React.FC = ({ navigation }: RouterProps) => {
         : quizList.length > 0
           ? (
         <ScrollView style={styles.scrollView}>
-          <QuizList quizList={quizList} onPress={wrapAsyncFunction(handleQuizPress)}/>
+          <QuizList quizList={quizList} onPress={wrapAsyncFunction(handleQuizPress)} />
         </ScrollView>
             )
           : (
@@ -78,6 +87,13 @@ const UploadScreen: React.FC = ({ navigation }: RouterProps) => {
           <Text style={styles.noContentText}>{"You don't have any new quizzes to upload to the store"}</Text>
         </View>
             )}
+      <AreYouSureUploadModal
+        onDismiss={() => setUploadVisible(false)}
+        visible={uploadVisible}
+        onCancel={() => setUploadVisible(false)}
+        onUpload={wrapAsyncFunction(handleUpload)}
+        action={'upload this quiz'}
+      />
       <Snackbar visible={visible} onDismiss={() => setVisible(false)}>
         Succesfully uploaded quiz!
       </Snackbar>

@@ -120,7 +120,8 @@ const styles = StyleSheet.create({
     // borderColor: 'red',
   },
   title: {
-    fontSize: 30
+    fontSize: 30,
+    textAlign: 'center'
   },
   creatorDate: {
     fontSize: 12,

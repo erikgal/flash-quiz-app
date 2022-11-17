@@ -13,7 +13,7 @@ export default function formatQuizToFirestore (quiz: Quiz): FirestoreQuiz {
         })
       }
     }),
-    date: new Timestamp(quiz.date.seconds, quiz.date.nanoseconds)
+    date: new Timestamp(restQuiz.date.seconds, restQuiz.date.nanoseconds)
   }
   return firestoreQuiz
 }
