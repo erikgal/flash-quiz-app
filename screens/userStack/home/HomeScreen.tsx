@@ -38,7 +38,7 @@ const HomeScreen: React.FC = ({ navigation }: RouterProps) => {
       if (quizList.length === 0) {
         void initialFetch()
       }
-      // real time update
+      // add event listener for real time update
       onSnapshot(collection(db, `users/${user.uid}/quizzes`), (snapshot) => {
         dispatch(loadQuizzes(snapshot.docs.map((docx) =>
           formatQuizFromFirestore(docx.data(), docx.id)

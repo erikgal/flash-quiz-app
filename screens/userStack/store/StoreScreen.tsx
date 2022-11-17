@@ -1,4 +1,4 @@
-import { collection, getDocs } from 'firebase/firestore'
+import { collection, getDocs, onSnapshot } from 'firebase/firestore'
 import React, { useEffect, useState } from 'react'
 import { View, ActivityIndicator, StyleSheet, FlatList } from 'react-native'
 import { List } from 'react-native-paper'
@@ -15,17 +15,26 @@ const StoreScreen: React.FC = ({ navigation }: RouterProps) => {
   const [quizList, setQuizList] = useState<Quiz[]>([])
   const dispatch = useDispatch()
 
+  async function initialFetch (): Promise<void> {
+    const fetchedQuizzes: Quiz[] = []
+    const querySnapshot = await getDocs(collection(db, 'store'))
+    querySnapshot.forEach(docx => {
+      fetchedQuizzes.push(formatQuizFromFirestore(docx.data(), docx.id))
+    })
+    setQuizList(fetchedQuizzes)
+    setLoading(false)
+  }
+
   useEffect(() => {
-    async function fetchData (): Promise<void> {
-      const fetchedQuizzes: Quiz[] = []
-      const querySnapshot = await getDocs(collection(db, 'store'))
-      querySnapshot.forEach(docx => {
-        fetchedQuizzes.push(formatQuizFromFirestore(docx.data(), docx.id))
-      })
-      setQuizList(fetchedQuizzes)
-      setLoading(false)
+    if (quizList.length === 0) {
+      void initialFetch()
     }
-    void fetchData()
+    // add event listener for real time update
+    onSnapshot(collection(db, 'store'), (snapshot) => {
+      setQuizList((snapshot.docs.map((docx) =>
+        formatQuizFromFirestore(docx.data(), docx.id)
+      )))
+    })
   }, [])
 
   const handleQuizPress = (quiz: Quiz): void => {
