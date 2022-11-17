@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { ScrollView, StyleSheet, View, Text } from 'react-native'
-import { ActivityIndicator, List } from 'react-native-paper'
+import { ActivityIndicator, List, Snackbar } from 'react-native-paper'
 import { Quiz, RouterProps } from '../../../types'
 import 'react-native-get-random-values'
 // import { v4 as uuidv4 } from 'uuid'
@@ -15,7 +15,15 @@ import wrapAsyncFunction from '../../../utils/functions/wrapAsyncFunction'
 const UploadScreen: React.FC = ({ navigation }: RouterProps) => {
   const [loading, setLoading] = useState<boolean>(true)
   const [quizList, setQuizList] = useState<Quiz[]>([])
+  const [visible, setVisible] = useState(false)
   const { user } = useAuthentication()
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setVisible(false)
+    }, 1500)
+    return () => clearTimeout(timer)
+  }, [visible])
 
   async function filterUploadedQuizzes (userQuizzes: Quiz[]): Promise<Quiz[]> {
     const storeQuizIds: string[] = []
@@ -46,6 +54,8 @@ const UploadScreen: React.FC = ({ navigation }: RouterProps) => {
   const handleQuizPress = async (quiz: Quiz): Promise<void> => {
     const firestoreQuiz = formatQuizToFirestore(quiz)
     await setDoc(doc(db, 'store', quiz.id), firestoreQuiz)
+    void fetchQuizzes()
+    setVisible(true)
   }
 
   return (
@@ -77,6 +87,9 @@ const UploadScreen: React.FC = ({ navigation }: RouterProps) => {
           <Text style={styles.noContentText}>{"You don't have any new quizzes to upload to the store"}</Text>
         </View>
             )}
+      <Snackbar visible={visible} onDismiss={() => setVisible(false)}>
+        Succesfully uploaded quiz!
+      </Snackbar>
     </View>
   )
 }

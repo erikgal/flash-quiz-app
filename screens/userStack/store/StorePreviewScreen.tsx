@@ -8,11 +8,13 @@ import { doc, getDoc, setDoc, Timestamp } from 'firebase/firestore'
 import { db } from '../../../firebaseConfig'
 import { useAuthentication } from '../../../utils/hooks/useAuthentication'
 import wrapAsyncFunction from '../../../utils/functions/wrapAsyncFunction'
+import { Snackbar } from 'react-native-paper'
 
 const StorePreviewScreen: React.FC = ({ navigation }: RouterProps) => {
   const quiz: Quiz | null = useSelector((state: RootState) => state.store.currentQuiz)
   const [loading, setLoading] = useState<boolean>(false)
   const [isDownloaded, setIsDownloaded] = useState<boolean>(false)
+  const [visible, setVisible] = useState(false)
   const { user } = useAuthentication()
 
   useEffect(() => {
@@ -25,12 +27,20 @@ const StorePreviewScreen: React.FC = ({ navigation }: RouterProps) => {
     }
   }, [user])
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setVisible(false)
+    }, 1500)
+    return () => clearTimeout(timer)
+  }, [visible])
+
   const handleDownload = async (): Promise<void> => {
     setLoading(true)
     const docSnap = await getDoc(doc(db, `store/${quiz!.id}`))
     if (docSnap.exists() && user != null) {
       await setDoc(doc(db, `users/${user.uid}/quizzes`, quiz!.id), docSnap.data())
       setIsDownloaded(true)
+      setVisible(true)
     } else {
       console.log('No such document!')
       setIsDownloaded(false)
@@ -52,9 +62,7 @@ const StorePreviewScreen: React.FC = ({ navigation }: RouterProps) => {
               )
                 .toDate()
                 .toDateString()}`}</Text>
-              <Text style={styles.download}>
-                {isDownloaded ? 'Downloaded' : ''}
-              </Text>
+              <Text style={styles.download}>{isDownloaded ? 'Downloaded' : ''}</Text>
               <Text style={styles.description}>{quiz.description}</Text>
             </View>
             <View style={styles.textBottom}>
@@ -69,7 +77,12 @@ const StorePreviewScreen: React.FC = ({ navigation }: RouterProps) => {
             </View>
           </View>
           <View style={styles.settings}>
-            <Button text={'Download'} loading={loading} onPress={wrapAsyncFunction(handleDownload)} disabled={isDownloaded}></Button>
+            <Button
+              text={'Download'}
+              loading={loading}
+              onPress={wrapAsyncFunction(handleDownload)}
+              disabled={isDownloaded}
+            ></Button>
           </View>
         </View>
           )
@@ -78,6 +91,12 @@ const StorePreviewScreen: React.FC = ({ navigation }: RouterProps) => {
           <Text style={styles.title}>ERROR: The quiz was properly loaded</Text>
         </View>
           )}
+      <Snackbar
+        visible={visible}
+        onDismiss={() => setVisible(false)}
+      >
+        {`Succesfully downloaded ${quiz!.title}!`}
+      </Snackbar>
     </>
   )
 }
