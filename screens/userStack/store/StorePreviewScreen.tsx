@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, View, Text } from 'react-native'
+import { StyleSheet, View, Text, ActivityIndicator } from 'react-native'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../store'
 import { Difficulties, Quiz, RouterProps } from '../../../types'
@@ -9,9 +9,11 @@ import { db } from '../../../firebaseConfig'
 import { useAuthentication } from '../../../utils/hooks/useAuthentication'
 import wrapAsyncFunction from '../../../utils/functions/wrapAsyncFunction'
 import { Snackbar } from 'react-native-paper'
+import { COLORS } from '../../../assets/colors'
 
 const StorePreviewScreen: React.FC = ({ navigation }: RouterProps) => {
   const quiz: Quiz | null = useSelector((state: RootState) => state.store.currentQuiz)
+  const [isMounted, setIsMounted] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
   const [isDownloaded, setIsDownloaded] = useState<boolean>(false)
   const [visible, setVisible] = useState(false)
@@ -21,6 +23,7 @@ const StorePreviewScreen: React.FC = ({ navigation }: RouterProps) => {
     async function fetchData (): Promise<void> {
       const document = await getDoc(doc(db, `users/${user!.uid}/quizzes/${quiz!.id}`))
       setIsDownloaded(document.data() !== undefined)
+      setIsMounted(true)
     }
     if (user != null) {
       void fetchData()
@@ -53,29 +56,37 @@ const StorePreviewScreen: React.FC = ({ navigation }: RouterProps) => {
       {quiz != null
         ? (
         <View style={styles.container}>
-          <View style={styles.textContainer}>
-            <View style={styles.textTop}>
-              <Text style={styles.title}>{quiz.title}</Text>
-              <Text style={styles.creatorDate}>{`${quiz.creatorName}; ${new Timestamp(
-                quiz.date.seconds,
-                quiz.date.nanoseconds
+          {isMounted
+            ? (
+            <View style={styles.textContainer}>
+              <View style={styles.textTop}>
+                <Text style={styles.title}>{quiz.title}</Text>
+                <Text style={styles.creatorDate}>{`${quiz.creatorName}; ${new Timestamp(
+                  quiz.date.seconds,
+                  quiz.date.nanoseconds
+                )
+                  .toDate()
+                  .toDateString()}`}</Text>
+                <Text style={styles.download}>{isDownloaded ? 'Downloaded' : ''}</Text>
+                <Text style={styles.description}>{quiz.description}</Text>
+              </View>
+              <View style={styles.textBottom}>
+                <View style={{ flexDirection: 'row' }}>
+                  <Text style={styles.themeDiff}>{'Theme: '}</Text>
+                  <Text style={styles.theme}>{quiz.theme}</Text>
+                </View>
+                <View style={{ flexDirection: 'row' }}>
+                  <Text style={styles.themeDiff}>{'Difficulty: '}</Text>
+                  <Text style={styles.theme}>{Object.values(Difficulties)[quiz.difficulty]}</Text>
+                </View>
+              </View>
+            </View>
               )
-                .toDate()
-                .toDateString()}`}</Text>
-              <Text style={styles.download}>{isDownloaded ? 'Downloaded' : ''}</Text>
-              <Text style={styles.description}>{quiz.description}</Text>
+            : (
+            <View style={styles.activityContainer}>
+              <ActivityIndicator size={45} color={COLORS.cyan} />
             </View>
-            <View style={styles.textBottom}>
-              <View style={{ flexDirection: 'row' }}>
-                <Text style={styles.themeDiff}>{'Theme: '}</Text>
-                <Text style={styles.theme}>{quiz.theme}</Text>
-              </View>
-              <View style={{ flexDirection: 'row' }}>
-                <Text style={styles.themeDiff}>{'Difficulty: '}</Text>
-                <Text style={styles.theme}>{Object.values(Difficulties)[quiz.difficulty]}</Text>
-              </View>
-            </View>
-          </View>
+              )}
           <View style={styles.settings}>
             <Button
               text={'Download'}
@@ -91,10 +102,7 @@ const StorePreviewScreen: React.FC = ({ navigation }: RouterProps) => {
           <Text style={styles.title}>ERROR: The quiz was properly loaded</Text>
         </View>
           )}
-      <Snackbar
-        visible={visible}
-        onDismiss={() => setVisible(false)}
-      >
+      <Snackbar visible={visible} onDismiss={() => setVisible(false)}>
         {`Succesfully downloaded ${quiz!.title}!`}
       </Snackbar>
     </>
@@ -158,6 +166,10 @@ const styles = StyleSheet.create({
   },
   button: {
     padding: 100
+  },
+  activityContainer: {
+    flex: 1,
+    justifyContent: 'center'
   }
 })
 
