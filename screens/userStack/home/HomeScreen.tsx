@@ -74,7 +74,7 @@ const HomeScreen: React.FC = ({ navigation }: RouterProps) => {
 
   return (
     <View style={styles.container}>
-      {loading
+      {loading && quizList.length === 0
         ? (
         <View style={styles.activityContainer}>
           <ActivityIndicator size={45} color={COLORS.cyan} />
