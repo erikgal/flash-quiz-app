@@ -4,7 +4,7 @@ import { View, ActivityIndicator, StyleSheet, FlatList } from 'react-native'
 import { List } from 'react-native-paper'
 import { useDispatch } from 'react-redux'
 import { COLORS } from '../../../assets/colors'
-import DownloadButton from '../../../components/buttons/DownloadButton'
+import UploadButton from '../../../components/buttons/UploadButtonButton'
 import { db } from '../../../firebaseConfig'
 import { Quiz, RouterProps } from '../../../types'
 import formatQuizFromFirestore from '../../../utils/functions/formatQuizFromFirestore'
@@ -70,7 +70,7 @@ const StoreScreen: React.FC = ({ navigation }: RouterProps) => {
         />
           )}
       <View style={styles.buttonContainer}>
-        <DownloadButton onPress={() => console.log('')} size={70} />
+        <UploadButton onPress={() => navigation.navigate('UploadScreen')} size={70} />
       </View>
     </View>
   )

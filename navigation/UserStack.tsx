@@ -10,6 +10,7 @@ import SummaryScreen from '../screens/userStack/home/SummaryScreen'
 import ProfileScreen from '../screens/userStack/profile/ProfileScreen'
 import StoreScreen from '../screens/userStack/store/StoreScreen'
 import StorePreviewScreen from '../screens/userStack/store/StorePreviewScreen'
+import UploadScreen from '../screens/userStack/store/UploadScreen'
 
 const HomeStack = createNativeStackNavigator()
 const HomeStackScreen: React.FC = () => {
@@ -29,6 +30,7 @@ const StoreStackScreen: React.FC = () => {
     <StoreStack.Navigator>
       <StoreStack.Screen name="StoreScreen" options={{ title: 'Store' }} component={StoreScreen} />
       <StoreStack.Screen name="StorePreviewScreen" options={{ title: 'Preview' }} component={StorePreviewScreen} />
+      <StoreStack.Screen name="UploadScreen" options={{ title: 'Pick a quiz to upload' }} component={UploadScreen} />
     </StoreStack.Navigator>
   )
 }

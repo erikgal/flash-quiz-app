@@ -52,7 +52,7 @@
     },
     {
         "title": "Neuroscience",
-        "id": "8asd7f98asd7f98",
+        "id": "fac8daf1-69ba-4b45-a667-66252cb9e9e8",
         "description": "Some neuroscience i want to remember from Andrew Hubermans podcast",
         "date": "12/9/2021",
         "difficulty": 2,
@@ -67,7 +67,7 @@
                 ]
             },
             {
-                "question": "Epinephrine is also known as xxx",
+                "question": "Epinephrine is also known as xxx.",
                 "answer": [
                     ["Adrenaline"]
                 ]

@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    borderColor: 'grey',
+    borderColor: COLORS.grey,
     borderTopWidth: 1
   },
   actionText: {

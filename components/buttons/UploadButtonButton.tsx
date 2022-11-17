@@ -3,12 +3,12 @@ import { SafeAreaView, StyleSheet, View, TouchableOpacity } from 'react-native'
 import Icon from '@expo/vector-icons/MaterialCommunityIcons'
 import { COLORS } from '../../assets/colors'
 
-interface DownloadButtonProps {
+interface UploadButtonProps {
   onPress: () => void
   size: number
 }
 
-const DownloadButton: React.FC<DownloadButtonProps> = ({ onPress, size }: DownloadButtonProps) => {
+const UploadButton: React.FC<UploadButtonProps> = ({ onPress, size }: UploadButtonProps) => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -46,4 +46,4 @@ const DownloadButton: React.FC<DownloadButtonProps> = ({ onPress, size }: Downlo
   )
 }
 
-export default DownloadButton
+export default UploadButton
