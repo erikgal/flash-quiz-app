@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { ScrollView, StyleSheet, View, Text } from 'react-native'
-import { ActivityIndicator, List, Snackbar } from 'react-native-paper'
+import { ActivityIndicator, Snackbar } from 'react-native-paper'
 import { Quiz, RouterProps } from '../../../types'
 import 'react-native-get-random-values'
 // import { v4 as uuidv4 } from 'uuid'
@@ -11,6 +11,7 @@ import { COLORS } from '../../../assets/colors'
 import formatQuizFromFirestore from '../../../utils/functions/formatQuizFromFirestore'
 import formatQuizToFirestore from '../../../utils/functions/formatQuizToFirestore'
 import wrapAsyncFunction from '../../../utils/functions/wrapAsyncFunction'
+import QuizList from '../../../components/list/QuizList'
 
 const UploadScreen: React.FC = ({ navigation }: RouterProps) => {
   const [loading, setLoading] = useState<boolean>(true)
@@ -69,17 +70,7 @@ const UploadScreen: React.FC = ({ navigation }: RouterProps) => {
         : quizList.length > 0
           ? (
         <ScrollView style={styles.scrollView}>
-          {quizList.map(quiz => {
-            return (
-              <List.Item
-                key={quiz.id}
-                title={quiz.title}
-                description={quiz.description}
-                onPress={wrapAsyncFunction(async () => await handleQuizPress(quiz))}
-                style={styles.listItem}
-              ></List.Item>
-            )
-          })}
+          <QuizList quizList={quizList} onPress={wrapAsyncFunction(handleQuizPress)}/>
         </ScrollView>
             )
           : (

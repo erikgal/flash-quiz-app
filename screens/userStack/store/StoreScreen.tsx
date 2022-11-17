@@ -30,10 +30,8 @@ const StoreScreen: React.FC = ({ navigation }: RouterProps) => {
       void initialFetch()
     }
     // add event listener for real time update
-    onSnapshot(collection(db, 'store'), (snapshot) => {
-      setQuizList((snapshot.docs.map((docx) =>
-        formatQuizFromFirestore(docx.data(), docx.id)
-      )))
+    onSnapshot(collection(db, 'store'), snapshot => {
+      setQuizList(snapshot.docs.map(docx => formatQuizFromFirestore(docx.data(), docx.id)))
     })
   }, [])
 
@@ -42,15 +40,19 @@ const StoreScreen: React.FC = ({ navigation }: RouterProps) => {
     navigation.navigate('StorePreviewScreen')
   }
 
-  const renderItem = ({ item }): JSX.Element => (
-    <List.Item
-      key={item.id}
-      title={item.title}
-      description={item.description}
-      onPress={() => handleQuizPress(item)}
-      style={styles.listItem}
-    />
-  )
+  const renderItem = ({ item, index }): JSX.Element => {
+    const backgroundColor = index % 2 === 0 ? COLORS.lightGrey : 'white'
+    const borderTopWidth = index !== 0 ? 0 : 1
+    return (
+      <List.Item
+        key={item.id}
+        title={item.title}
+        description={item.description}
+        onPress={() => handleQuizPress(item)}
+        style={[styles.listItem, { backgroundColor, borderTopWidth }]}
+      />
+    )
+  }
 
   return (
     <View style={styles.container}>
@@ -60,14 +62,10 @@ const StoreScreen: React.FC = ({ navigation }: RouterProps) => {
           <ActivityIndicator size={45} color={COLORS.cyan} />
         </View>
           )
-        : quizList.length > 0 &&
-          (
-        <FlatList
-          style={styles.flatList}
-          data={quizList}
-          renderItem={renderItem}
-          keyExtractor={item => item.id}
-        />
+        : (
+            quizList.length > 0 && (
+          <FlatList style={styles.flatList} data={quizList} renderItem={renderItem} keyExtractor={item => item.id} />
+            )
           )}
       <View style={styles.buttonContainer}>
         <UploadButton onPress={() => navigation.navigate('UploadScreen')} size={70} />

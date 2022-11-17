@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { ScrollView, StyleSheet, View, Text } from 'react-native'
-import { ActivityIndicator, List } from 'react-native-paper'
+import { ActivityIndicator } from 'react-native-paper'
 import { Quiz, RouterProps } from '../../../types'
 import PlusButton from '../../../components/buttons/PlusButton'
 import { RootState } from '../../../store'
@@ -15,6 +15,7 @@ import { COLORS } from '../../../assets/colors'
 import formatQuizFromFirestore from '../../../utils/functions/formatQuizFromFirestore'
 import CancelEditDeleteModal from '../../../components/modals/CancelEditDeleteModal'
 import wrapAsyncFunction from '../../../utils/functions/wrapAsyncFunction'
+import QuizList from '../../../components/list/QuizList'
 
 const HomeScreen: React.FC = ({ navigation }: RouterProps) => {
   const [loading, setLoading] = useState<boolean>(true)
@@ -83,18 +84,7 @@ const HomeScreen: React.FC = ({ navigation }: RouterProps) => {
         : quizList.length > 0
           ? (
         <ScrollView style={styles.scrollView}>
-          {quizList.map(quiz => {
-            return (
-              <List.Item
-                key={quiz.id}
-                title={quiz.title}
-                description={quiz.description}
-                onPress={() => handleQuizPress(quiz)}
-                onLongPress={() => handleLongPress(quiz)}
-                style={styles.listItem}
-              ></List.Item>
-            )
-          })}
+          <QuizList quizList={quizList} onPress={handleQuizPress} onLongPress={handleLongPress}/>
         </ScrollView>
             )
           : (
@@ -102,6 +92,9 @@ const HomeScreen: React.FC = ({ navigation }: RouterProps) => {
           <Text style={styles.noContentText}>{"You don't have any quizzes, create or download some!"}</Text>
         </View>
             )}
+      <View style={styles.buttonContainer}>
+        <PlusButton onPress={handleAdd} size={70} />
+      </View>
       <CancelEditDeleteModal
         onDismiss={() => setVisible(false)}
         visible={visible}
@@ -109,9 +102,6 @@ const HomeScreen: React.FC = ({ navigation }: RouterProps) => {
         onCancel={() => setVisible(false)}
         onDelete={wrapAsyncFunction(handleDelete)}
       />
-      <View style={styles.buttonContainer}>
-        <PlusButton onPress={handleAdd} size={70} />
-      </View>
     </View>
   )
 }
@@ -143,7 +133,7 @@ const styles = StyleSheet.create({
     width: 27
   },
   listItem: {
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: 'grey'
   },
   activityContainer: {
