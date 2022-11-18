@@ -1,16 +1,22 @@
 import React from 'react'
 import { StyleSheet, View, Text } from 'react-native'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../../../store'
-import { Difficulties, Quiz, RouterProps } from '../../../types'
+import { Difficulties, Quiz, QuizType, QuizForm, RouterProps } from '../../../types'
 import RoundButton from '../../../components/buttons/RoundButton'
 import { Timestamp } from 'firebase/firestore'
+import { setCurrentQuizWrite } from '../../../utils/redux/quizSlice'
 
 const HomePreviewScreen: React.FC = ({ navigation }: RouterProps) => {
   const quiz: Quiz | null = useSelector((state: RootState) => state.quiz.currentQuiz)
+  const dispatch = useDispatch()
 
   const handleStart = (): void => {
-    navigation.navigate('QuizScreen')
+    if (quiz!.type === QuizType.FormQuiz) {
+      dispatch(setCurrentQuizWrite(quiz as QuizForm))
+      navigation.navigate('QuizFormScreen')
+    }
+    // TODO QuizMultiple
   }
 
   return (

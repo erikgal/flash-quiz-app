@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View, Text, TextInput, Keyboard } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
-import RoundButton from '../../../components/buttons/RoundButton'
-import { RootState } from '../../../store'
-import { saveUserAnswers } from '../../../utils/redux/quizSlice'
+import RoundButton from '../../../../components/buttons/RoundButton'
+import { RootState } from '../../../../store'
+import { saveUserAnswers } from '../../../../utils/redux/quizSlice'
 
-import { Quiz, Question, RouterProps, InputMap } from '../../../types'
+import { QuestionForm, RouterProps, InputMap, QuizForm } from '../../../../types'
 
-function getNumberOfChars (index: number, question: Question): number {
+function getNumberOfChars (index: number, question: QuestionForm): number {
   const inputIndexArray: number[] = []
   question.question.split(' ').forEach((word, i) => {
     if (word.includes('xxx')) {
@@ -30,13 +30,13 @@ function getNumberOfChars (index: number, question: Question): number {
   return 0
 }
 
-const QuizScreen: React.FC = ({ navigation }: RouterProps) => {
+const QuizWriteScreen: React.FC = ({ navigation }: RouterProps) => {
   const [questionIndex, setQuestionIndex] = useState<number>(0)
   const [userAnswers, setUserAnswers] = useState<InputMap>({})
   const [previousAnswers, setPreviousAnswers] = useState<InputMap[]>([])
   const [corrections, setCorrections] = useState<boolean[]>([])
   const [previousCorrections, setPreviousCorrections] = useState<boolean[][]>([])
-  const quiz: Quiz | null = useSelector((state: RootState) => state.quiz.currentQuiz)
+  const quiz: QuizForm | null = useSelector((state: RootState) => state.quiz.currentQuizForm)
 
   const dispatch = useDispatch()
 
@@ -51,7 +51,7 @@ const QuizScreen: React.FC = ({ navigation }: RouterProps) => {
       })
     } else {
       dispatch(saveUserAnswers({ corrections: previousCorrections, userAnswers: previousAnswers }))
-      navigation.navigate('SummaryScreen')
+      navigation.navigate('SummaryFormScreen')
     }
   }, [questionIndex])
 
@@ -248,4 +248,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default QuizScreen
+export default QuizWriteScreen

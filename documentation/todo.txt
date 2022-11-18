@@ -1,3 +1,21 @@
-1. In SignUpScreen there is an async issue with () => setSecureTextEntry(!secureTextEntry)
+- In the PreviewScreens (both home and store), and some kind of way to preview/reveal 
+the questions
 
-2. Transfer Libary from react-native-material to react-native-paper
+- Only be able to upload quizes with corresponding creatorId
+
+- Add a raiting system (1-5 stars) and download count
+
+- Populate store with quizzes from differnet apis
+- Add a shuffle mode which directle utilizes an api
+
+- Add search functionality in both home and store with andvanced filter functionality
+
+- In SignUpScreen there is an async issue with () => setSecureTextEntry(!secureTextEntry)
+
+
+
+
+BUGS:
+
+- If you log out from a user who has som quizzes, and than sgin up a new account, 
+an infinte loading happens

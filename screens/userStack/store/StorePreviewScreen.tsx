@@ -21,7 +21,7 @@ const StorePreviewScreen: React.FC = ({ navigation }: RouterProps) => {
 
   useEffect(() => {
     async function fetchData (): Promise<void> {
-      const document = await getDoc(doc(db, `users/${user!.uid}/quizzes/${quiz!.id}`))
+      const document = await getDoc(doc(db, `users/${user!.uid}/formQuiz/${quiz!.id}`))
       setIsDownloaded(document.data() !== undefined)
       setIsMounted(true)
     }
@@ -39,9 +39,9 @@ const StorePreviewScreen: React.FC = ({ navigation }: RouterProps) => {
 
   const handleDownload = async (): Promise<void> => {
     setLoading(true)
-    const docSnap = await getDoc(doc(db, `store/${quiz!.id}`))
+    const docSnap = await getDoc(doc(db, `store/userCreated/formQuiz/${quiz!.id}`))
     if (docSnap.exists() && user != null) {
-      await setDoc(doc(db, `users/${user.uid}/quizzes`, quiz!.id), docSnap.data())
+      await setDoc(doc(db, `users/${user.uid}/formQuiz`, quiz!.id), docSnap.data())
       setIsDownloaded(true)
       setVisible(true)
     } else {

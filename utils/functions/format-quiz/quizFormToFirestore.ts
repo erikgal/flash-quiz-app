@@ -1,9 +1,9 @@
 import { Timestamp } from 'firebase/firestore'
-import { FirestoreQuiz, Quiz } from '../../types'
+import { FirestoreQuizForm, QuizForm } from '../../../types'
 
-export default function formatQuizToFirestore (quiz: Quiz): FirestoreQuiz {
+export default function quizFormToFirestore (quiz: QuizForm): FirestoreQuizForm {
   const { id, ...restQuiz } = quiz
-  const firestoreQuiz: FirestoreQuiz = {
+  const firestoreQuiz: FirestoreQuizForm = {
     ...restQuiz,
     questions: restQuiz.questions.map(questionObj => {
       return {

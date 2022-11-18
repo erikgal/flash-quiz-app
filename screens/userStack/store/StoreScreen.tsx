@@ -6,8 +6,8 @@ import { useDispatch } from 'react-redux'
 import { COLORS } from '../../../assets/colors'
 import UploadButton from '../../../components/buttons/UploadButtonButton'
 import { db } from '../../../firebaseConfig'
-import { Quiz, RouterProps } from '../../../types'
-import formatQuizFromFirestore from '../../../utils/functions/formatQuizFromFirestore'
+import { Quiz, QuizForm, RouterProps } from '../../../types'
+import quizFormFromFirestore from '../../../utils/functions/format-quiz/quizFormFromFirestore'
 import { setCurrentQuiz } from '../../../utils/redux/storeSlice'
 
 const StoreScreen: React.FC = ({ navigation }: RouterProps) => {
@@ -16,10 +16,10 @@ const StoreScreen: React.FC = ({ navigation }: RouterProps) => {
   const dispatch = useDispatch()
 
   async function initialFetch (): Promise<void> {
-    const fetchedQuizzes: Quiz[] = []
-    const querySnapshot = await getDocs(collection(db, 'store'))
+    const fetchedQuizzes: QuizForm[] = []
+    const querySnapshot = await getDocs(collection(db, 'store/userCreated/formQuiz'))
     querySnapshot.forEach(docx => {
-      fetchedQuizzes.push(formatQuizFromFirestore(docx.data(), docx.id))
+      fetchedQuizzes.push(quizFormFromFirestore(docx.data(), docx.id))
     })
     setQuizList(fetchedQuizzes)
     setLoading(false)
@@ -30,8 +30,8 @@ const StoreScreen: React.FC = ({ navigation }: RouterProps) => {
       void initialFetch()
     }
     // add event listener for real time update
-    onSnapshot(collection(db, 'store'), snapshot => {
-      setQuizList(snapshot.docs.map(docx => formatQuizFromFirestore(docx.data(), docx.id)))
+    onSnapshot(collection(db, 'store/userCreated/formQuiz'), snapshot => {
+      setQuizList(snapshot.docs.map(docx => quizFormFromFirestore(docx.data(), docx.id)))
     })
   }, [])
 

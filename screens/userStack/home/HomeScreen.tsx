@@ -12,7 +12,7 @@ import { db } from '../../../firebaseConfig'
 import { collection, deleteDoc, doc, getDocs, onSnapshot } from 'firebase/firestore'
 import { useAuthentication } from '../../../utils/hooks/useAuthentication'
 import { COLORS } from '../../../assets/colors'
-import formatQuizFromFirestore from '../../../utils/functions/formatQuizFromFirestore'
+import formatQuizFromFirestore from '../../../utils/functions/format-quiz/quizFormFromFirestore'
 import CancelEditDeleteModal from '../../../components/modals/CancelEditDeleteModal'
 import wrapAsyncFunction from '../../../utils/functions/wrapAsyncFunction'
 import QuizList from '../../../components/list/QuizList'
@@ -20,15 +20,16 @@ import AreYouSureModal from '../../../components/modals/AreYouSureDeleteModal'
 
 const HomeScreen: React.FC = ({ navigation }: RouterProps) => {
   const [loading, setLoading] = useState<boolean>(true)
-  const [visible, setVisible] = React.useState(false)
-  const [visibleDelete, setVisibleDelete] = React.useState(false)
+  const [visible, setVisible] = useState(false)
+  const [visibleDelete, setVisibleDelete] = useState(false)
   const [longPressQuiz, setLongPressQuiz] = useState<Quiz>()
   const quizList: Quiz[] = useSelector((state: RootState) => state.quiz.quizzes)
   const { user } = useAuthentication()
+  const dispatch = useDispatch()
 
   async function initialFetch (): Promise<void> {
     const fetchedQuizzes: Quiz[] = []
-    const querySnapshot = await getDocs(collection(db, `users/${user!.uid}/quizzes`))
+    const querySnapshot = await getDocs(collection(db, `users/${user!.uid}/formQuiz`))
     querySnapshot.forEach(docx => {
       fetchedQuizzes.push(formatQuizFromFirestore(docx.data(), docx.id))
     })
@@ -42,15 +43,13 @@ const HomeScreen: React.FC = ({ navigation }: RouterProps) => {
         void initialFetch()
       }
       // add event listener for real time update
-      onSnapshot(collection(db, `users/${user.uid}/quizzes`), (snapshot) => {
+      onSnapshot(collection(db, `users/${user.uid}/formQuiz`), (snapshot) => {
         dispatch(loadQuizzes(snapshot.docs.map((docx) =>
           formatQuizFromFirestore(docx.data(), docx.id)
         )))
       })
     }
   }, [user])
-
-  const dispatch = useDispatch()
 
   useEffect(() => {
     dispatch(setCurrentQuiz(null))
@@ -68,7 +67,7 @@ const HomeScreen: React.FC = ({ navigation }: RouterProps) => {
 
   const handleDelete = async (): Promise<void> => {
     setVisibleDelete(false)
-    await deleteDoc(doc(db, `users/${user!.uid}/quizzes/${longPressQuiz!.id}`))
+    await deleteDoc(doc(db, `users/${user!.uid}/formQuiz/${longPressQuiz!.id}`))
   }
 
   const handlePressDelete = (): void => {

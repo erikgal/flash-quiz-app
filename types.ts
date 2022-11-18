@@ -1,23 +1,19 @@
 import { NavigationProp } from '@react-navigation/native'
 import { Timestamp } from 'firebase/firestore'
 
-export interface Question {
+export enum QuizType {
+  FormQuiz = 'formQuiz',
+  MultipleChoiceQuiz = 'multipleChoiceQuiz'
+}
+
+export interface QuestionForm {
   'question': string
   'answer': string[][]
 }
 
-export interface FirestoreAnswer {
-  [key: number]: string
-}
-
-export interface FirestoreQuestion {
+export interface QuestionMultiple {
   'question': string
-  'answer': FirestoreAnswer[]
-}
-
-export interface TimeDate {
-  'nanoseconds': number
-  'seconds': number
+  'answer': string[]
 }
 
 export interface Quiz {
@@ -29,7 +25,32 @@ export interface Quiz {
   'theme': string
   'creatorId': string
   'creatorName': string
-  'questions': Question[]
+  'type': QuizType
+  'downloads': number
+  'raitings': Raiting[]
+}
+
+export interface QuizForm extends Quiz {
+  'questions': QuestionForm[]
+  'type': QuizType.FormQuiz
+}
+
+export interface QuizMultiple extends Quiz {
+  'questions': QuestionMultiple []
+  'type': QuizType.MultipleChoiceQuiz
+}
+
+export interface FirestoreFormAnswer {
+  [key: number]: string
+}
+
+export interface FirestoreQuestion {
+  'question': string
+  'answer': FirestoreFormAnswer[]
+}
+
+export interface Raiting {
+  'creatorId': number
 }
 
 export interface FirestoreQuiz {
@@ -40,7 +61,20 @@ export interface FirestoreQuiz {
   'theme': string
   'creatorId': string
   'creatorName': string
+}
+
+export interface FirestoreQuizForm extends FirestoreQuiz {
   'questions': FirestoreQuestion[]
+  'downloads': number
+  'raitings': Raiting[]
+  'type': QuizType.FormQuiz
+}
+
+export interface FirestoreQuizMultiple extends FirestoreQuiz {
+  'questions': FirestoreQuestion[]
+  'downloads': number
+  'raitings': Raiting[]
+  'type': QuizType.MultipleChoiceQuiz
 }
 
 export interface RouterProps {

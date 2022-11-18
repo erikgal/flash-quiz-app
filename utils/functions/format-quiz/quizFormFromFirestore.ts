@@ -1,7 +1,7 @@
 import { DocumentData } from 'firebase/firestore'
-import { Quiz } from '../../types'
+import { QuizForm } from '../../../types'
 
-export default function formatQuizFromFirestore (doc: DocumentData, id: string): Quiz {
+export default function quizFormFromFirestore (doc: DocumentData, id: string): QuizForm {
   const quiz = {
     ...doc,
     id,
@@ -18,5 +18,5 @@ export default function formatQuizFromFirestore (doc: DocumentData, id: string):
       seconds: doc.date.seconds
     }
   }
-  return quiz as Quiz
+  return quiz as QuizForm
 }

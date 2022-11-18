@@ -1,13 +1,13 @@
-import Button from '../../../components/buttons/RoundButton'
+import Button from '../../../../components/buttons/RoundButton'
 import React, { useEffect } from 'react'
 import { StyleSheet, View, Text, ScrollView } from 'react-native'
-import { Quiz, RouterProps, UserAnswers } from '../../../types'
+import { QuizForm, RouterProps, UserAnswers } from '../../../../types'
 import { StackActions } from '@react-navigation/native'
-import { RootState } from '../../../store'
+import { RootState } from '../../../../store'
 import { useSelector } from 'react-redux'
 
 const SummaryScreen: React.FC = ({ navigation }: RouterProps) => {
-  const quiz: Quiz | null = useSelector((state: RootState) => state.quiz.currentQuiz)
+  const quiz: QuizForm | null = useSelector((state: RootState) => state.quiz.currentQuizForm)
   const { corrections, userAnswers }: UserAnswers = useSelector((state: RootState) => state.quiz.userAnswers)
   const numOfCorrect = corrections.flat().filter(correction => correction).length
   const numOfWrong = corrections.flat().filter(correction => !correction).length

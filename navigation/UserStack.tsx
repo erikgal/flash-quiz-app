@@ -5,8 +5,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import Icon from '@expo/vector-icons/Ionicons'
 import HomeScreen from '../screens/userStack/home/HomeScreen'
 import HomePreviewScreen from '../screens/userStack/home/HomePreviewScreen'
-import QuizScreen from '../screens/userStack/home/QuizScreen'
-import SummaryScreen from '../screens/userStack/home/SummaryScreen'
+import QuizFormScreen from '../screens/userStack/home/quiz-form/QuizFormScreen'
+import SummaryFormScreen from '../screens/userStack/home/quiz-form/SummaryFormScreen'
 import ProfileScreen from '../screens/userStack/profile/ProfileScreen'
 import StoreScreen from '../screens/userStack/store/StoreScreen'
 import StorePreviewScreen from '../screens/userStack/store/StorePreviewScreen'
@@ -18,8 +18,8 @@ const HomeStackScreen: React.FC = () => {
     <HomeStack.Navigator>
       <HomeStack.Screen name="HomeScreen" options={{ title: 'Home' }} component={HomeScreen} />
       <HomeStack.Screen name="HomePreviewScreen" options={{ title: 'Preview' }} component={HomePreviewScreen}/>
-      <HomeStack.Screen name="QuizScreen" options={{ title: 'Quiz' }} component={QuizScreen}/>
-      <HomeStack.Screen name="SummaryScreen" options={{ title: 'Summary', headerBackVisible: false }} component={SummaryScreen}/>
+      <HomeStack.Screen name="QuizFormScreen" options={{ title: 'Quiz' }} component={QuizFormScreen}/>
+      <HomeStack.Screen name="SummaryFormScreen" options={{ title: 'Summary', headerBackVisible: false }} component={SummaryFormScreen}/>
     </HomeStack.Navigator>
   )
 }
