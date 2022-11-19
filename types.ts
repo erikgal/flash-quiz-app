@@ -13,7 +13,8 @@ export interface QuestionForm {
 
 export interface QuestionMultiple {
   'question': string
-  'answer': string[]
+  'answer': string
+  'incorrect_answers': string[]
 }
 
 export interface Quiz {
@@ -36,7 +37,7 @@ export interface QuizForm extends Quiz {
 }
 
 export interface QuizMultiple extends Quiz {
-  'questions': QuestionMultiple []
+  'questions': QuestionMultiple[]
   'type': QuizType.MultipleChoiceQuiz
 }
 
@@ -44,9 +45,15 @@ export interface FirestoreFormAnswer {
   [key: number]: string
 }
 
-export interface FirestoreQuestion {
+export interface FirestoreFormQuestion {
   'question': string
   'answer': FirestoreFormAnswer[]
+}
+
+export interface FirestoreMultipleQuestion {
+  'question': string
+  'answer': string
+  'incorrect_answers': string[]
 }
 
 export interface Raiting {
@@ -61,19 +68,17 @@ export interface FirestoreQuiz {
   'theme': string
   'creatorId': string
   'creatorName': string
+  'downloads': number
+  'raitings': Raiting[]
 }
 
 export interface FirestoreQuizForm extends FirestoreQuiz {
-  'questions': FirestoreQuestion[]
-  'downloads': number
-  'raitings': Raiting[]
+  'questions': FirestoreFormQuestion[]
   'type': QuizType.FormQuiz
 }
 
 export interface FirestoreQuizMultiple extends FirestoreQuiz {
-  'questions': FirestoreQuestion[]
-  'downloads': number
-  'raitings': Raiting[]
+  'questions': FirestoreMultipleQuestion[]
   'type': QuizType.MultipleChoiceQuiz
 }
 
