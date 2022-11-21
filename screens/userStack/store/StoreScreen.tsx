@@ -6,8 +6,9 @@ import { useDispatch } from 'react-redux'
 import { COLORS } from '../../../assets/colors'
 import UploadButton from '../../../components/buttons/UploadButtonButton'
 import { db } from '../../../firebaseConfig'
-import { Quiz, QuizForm, RouterProps } from '../../../types'
+import { Quiz, RouterProps } from '../../../types'
 import quizFormFromFirestore from '../../../utils/functions/format-quiz/quizFormFromFirestore'
+import quizMultipleFromFirestore from '../../../utils/functions/format-quiz/quizMultipleFromFirestore'
 import { setCurrentQuiz } from '../../../utils/redux/storeSlice'
 
 const StoreScreen: React.FC = ({ navigation }: RouterProps) => {
@@ -15,11 +16,15 @@ const StoreScreen: React.FC = ({ navigation }: RouterProps) => {
   const [quizList, setQuizList] = useState<Quiz[]>([])
   const dispatch = useDispatch()
 
-  async function initialFetch (): Promise<void> {
-    const fetchedQuizzes: QuizForm[] = []
-    const querySnapshot = await getDocs(collection(db, 'store/userCreated/formQuiz'))
-    querySnapshot.forEach(docx => {
+  async function fetchQuizzes (): Promise<void> {
+    const fetchedQuizzes: Quiz[] = []
+    const formSnapshot = await getDocs(collection(db, 'store/userCreated/formQuiz'))
+    formSnapshot.forEach(docx => {
       fetchedQuizzes.push(quizFormFromFirestore(docx.data(), docx.id))
+    })
+    const apiSnapshot = await getDocs(collection(db, 'store/api/multipleChoiceQuiz'))
+    apiSnapshot.forEach(docx => {
+      fetchedQuizzes.push(quizMultipleFromFirestore(docx.data(), docx.id))
     })
     setQuizList(fetchedQuizzes)
     setLoading(false)
@@ -27,11 +32,14 @@ const StoreScreen: React.FC = ({ navigation }: RouterProps) => {
 
   useEffect(() => {
     if (quizList.length === 0) {
-      void initialFetch()
+      void fetchQuizzes()
     }
     // add event listener for real time update
     onSnapshot(collection(db, 'store/userCreated/formQuiz'), snapshot => {
-      setQuizList(snapshot.docs.map(docx => quizFormFromFirestore(docx.data(), docx.id)))
+      void fetchQuizzes()
+    })
+    onSnapshot(collection(db, 'store/api/multipleChoiceQuiz'), snapshot => {
+      void fetchQuizzes()
     })
   }, [])
 
@@ -85,7 +93,8 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     alignItems: 'flex-end',
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-end',
+    maxHeight: 0
   },
   flatList: {
     flex: 1,

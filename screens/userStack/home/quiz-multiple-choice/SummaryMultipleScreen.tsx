@@ -1,16 +1,19 @@
 import Button from '../../../../components/buttons/RoundButton'
 import React, { useEffect } from 'react'
 import { StyleSheet, View, Text, ScrollView } from 'react-native'
-import { QuizForm, RouterProps, UserAnswersForm } from '../../../../types'
+import { QuizMultiple, RouterProps, UserAnswersMultiple } from '../../../../types'
 import { StackActions } from '@react-navigation/native'
 import { RootState } from '../../../../store'
 import { useSelector } from 'react-redux'
+import { decode } from 'html-entities'
 
-const SummaryFormScreen: React.FC = ({ navigation }: RouterProps) => {
-  const quiz: QuizForm | null = useSelector((state: RootState) => state.quiz.currentQuizForm)
-  const { corrections, userAnswers }: UserAnswersForm = useSelector((state: RootState) => state.quiz.userAnswersForm)
-  const numOfCorrect = corrections.flat().filter(correction => correction).length
-  const numOfWrong = corrections.flat().filter(correction => !correction).length
+const SummaryMultipleScreen: React.FC = ({ navigation }: RouterProps) => {
+  const quiz: QuizMultiple | null = useSelector((state: RootState) => state.quiz.currentQuizMultiple)
+  const { corrections, userAnswers }: UserAnswersMultiple = useSelector(
+    (state: RootState) => state.quiz.userAnswersMultiple
+  )
+  const numOfCorrect = corrections.filter(correction => correction).length
+  const numOfWrong = corrections.filter(correction => !correction).length
 
   useEffect(
     () =>
@@ -24,41 +27,27 @@ const SummaryFormScreen: React.FC = ({ navigation }: RouterProps) => {
     [navigation]
   )
 
+  const handleClose = (): void => {
+    navigation.dispatch(StackActions.popToTop())
+  }
+
   const getScrollViewContent = (): Array<JSX.Element | null> => {
     return quiz!.questions.map((question, i) => {
-      let answerCounter = 0
-
-      if (corrections[i].some(correction => !correction)) {
-        const correctAnswers: string[] = []
-        quiz?.questions[i].answer.forEach((answer, j) => {
-          if (!corrections[i][j]) {
-            correctAnswers.push(answer.join('/'))
-          }
-        })
-
-        const formattedAnswers = (
-          <Text key={'formattedAnswers'}>{`(Correct answer: ${correctAnswers.join(', ')})`}</Text>
-        )
+      if (!corrections[i]) {
+        const formattedAnswers = [<Text key={'wrong answer'} style={{ color: 'red' }}>{`${userAnswers[i]}`}</Text>,
+        <Text key={'correct answer'}>{' (Correct answer: '}</Text>,
+        <Text key={'answer'} style={{ color: 'green' }} >{`${decode(question.answer)}`}</Text>,
+        <Text key={')'} >{')'}</Text>]
 
         return (
           <View style={styles.textWrap} key={i}>
             {question.question
               .split(' ')
-              .map((word, j) => {
-                if (word.includes('xxx')) {
-                  answerCounter += 1
-                  return (
-                    <Text key={j} style={[styles.word, { color: corrections[i][answerCounter - 1] ? 'green' : 'red' }]}>
-                      {userAnswers[i][j] !== '' ? userAnswers[i][j] : '__'}
-                    </Text>
-                  )
-                }
-                return (
-                  <Text key={j} style={styles.word}>
-                    {word}
-                  </Text>
-                )
-              })
+              .map((word, j) => (
+                <Text key={j} style={styles.word}>
+                  {decode(word)}
+                </Text>
+              ))
               .concat(formattedAnswers)}
           </View>
         )
@@ -66,10 +55,6 @@ const SummaryFormScreen: React.FC = ({ navigation }: RouterProps) => {
         return null
       }
     })
-  }
-
-  const handleClose = (): void => {
-    navigation.dispatch(StackActions.popToTop())
   }
 
   return (
@@ -178,4 +163,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default SummaryFormScreen
+export default SummaryMultipleScreen

@@ -2,10 +2,10 @@ import React from 'react'
 import { StyleSheet, View, Text } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../../../store'
-import { Difficulties, Quiz, QuizType, QuizForm, RouterProps } from '../../../types'
+import { Difficulties, Quiz, QuizType, QuizForm, RouterProps, QuizMultiple } from '../../../types'
 import RoundButton from '../../../components/buttons/RoundButton'
 import { Timestamp } from 'firebase/firestore'
-import { setCurrentQuizWrite } from '../../../utils/redux/quizSlice'
+import { setCurrentQuizForm, setCurrentQuizMultiple } from '../../../utils/redux/quizSlice'
 
 const HomePreviewScreen: React.FC = ({ navigation }: RouterProps) => {
   const quiz: Quiz | null = useSelector((state: RootState) => state.quiz.currentQuiz)
@@ -13,10 +13,12 @@ const HomePreviewScreen: React.FC = ({ navigation }: RouterProps) => {
 
   const handleStart = (): void => {
     if (quiz!.type === QuizType.FormQuiz) {
-      dispatch(setCurrentQuizWrite(quiz as QuizForm))
+      dispatch(setCurrentQuizForm(quiz as QuizForm))
       navigation.navigate('QuizFormScreen')
+    } else if (quiz!.type === QuizType.MultipleChoiceQuiz) {
+      dispatch(setCurrentQuizMultiple(quiz as QuizMultiple))
+      navigation.navigate('QuizMultipleScreen')
     }
-    // TODO QuizMultiple
   }
 
   return (
@@ -36,24 +38,24 @@ const HomePreviewScreen: React.FC = ({ navigation }: RouterProps) => {
               <Text style={styles.description}>{quiz.description}</Text>
             </View>
             <View style={styles.textBottom}>
-            <View style={{ flexDirection: 'row' }}>
+              <View style={styles.themeDiffContainer}>
                 <Text style={styles.themeDiff}>{'Theme: '}</Text>
                 <Text style={styles.theme}>{quiz.theme}</Text>
               </View>
-              <View style={{ flexDirection: 'row' }}>
+              <View style={styles.themeDiffContainer}>
                 <Text style={styles.themeDiff}>{'Difficulty: '}</Text>
                 <Text style={styles.theme}>{Object.values(Difficulties)[quiz.difficulty]}</Text>
               </View>
             </View>
           </View>
           <View style={styles.settings}>
-            <RoundButton text={'Start'} onPress={handleStart} loading={false} disabled = {false}></RoundButton>
+            <RoundButton text={'Start'} onPress={handleStart} loading={false} disabled={false}></RoundButton>
           </View>
         </View>
           )
         : (
         <View style={styles.textContainer}>
-          <Text style={styles.title}>ERROR: The quiz was properly loaded</Text>
+          <Text style={styles.title}>ERROR; The quiz was properly loaded</Text>
         </View>
           )}
     </>
@@ -96,6 +98,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly'
     // borderWidth: 2,
     // borderColor: 'green'
+  },
+  themeDiffContainer: {
+    flex: 1,
+    alignItems: 'center'
   },
   themeDiff: {
     fontSize: 20,

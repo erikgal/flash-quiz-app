@@ -61,7 +61,7 @@ const UploadScreen: React.FC = ({ navigation }: RouterProps) => {
   }
 
   const handleUpload = async (): Promise<void> => {
-    const firestoreQuiz = formatQuizToFirestore(selectedQuiz!)
+    const firestoreQuiz = formatQuizToFirestore(selectedQuiz!, 'store/userCreated/formQuiz')
     await setDoc(doc(db, 'store/userCreated/formQuiz', selectedQuiz!.id), firestoreQuiz)
     void fetchQuizzes()
     setUploadVisible(false)

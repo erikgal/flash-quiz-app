@@ -57,19 +57,18 @@ export default async function scrapeAllQuizzes (): Promise<void> {
       restQuestions -= amount
     }
 
-    const formattedTitle = category.name.includes(':') ? category.name.split(': ')[1] : category.name
-    const stringTitleToCreateIdFrom = `${formattedTitle} from Open Trivia Database`
-    console.log(formattedTitle)
+    const formattedTheme = category.name.includes(':') ? category.name.split(': ')[1] : category.name
+    const stringTitleToCreateIdFrom = `${formattedTheme} from Open Trivia Database`
+    const path = 'store/api/multipleChoiceQuiz'
 
     const formattedQuestions = Object.keys(questionsSortByDiff).map((key, i) => {
       const formattedQuestion: QuizMultiple = {
         id: getUuid(stringTitleToCreateIdFrom + key),
-        title: `${formattedTitle} from Open Trivia Database`,
-        description: `This is ${i === 0 ? 'an' : 'a'} ${Object.keys(questionsSortByDiff)[i]} multiple choice and yes/no quiz from the 
-            website https://opentdb.com/, and is about ${formattedTitle}.`,
+        title: `${formattedTheme} from Open Trivia Database`,
+        description: `This is ${i === 0 ? 'an' : 'a'} ${Object.keys(questionsSortByDiff)[i]} multiple choice and yes/no quiz from Open Trivia Database, and is about ${formattedTheme}.`,
         date: Timestamp.fromDate(new Date()),
         difficulty: Difficulties[capitalizeFirstLetter(Object.keys(questionsSortByDiff)[i])],
-        theme: category.name,
+        theme: formattedTheme,
         creatorId: 'https://opentdb.com/',
         creatorName: 'Open Trivia Database',
         downloads: 0,
@@ -81,7 +80,8 @@ export default async function scrapeAllQuizzes (): Promise<void> {
             answer: thisQuestion.correct_answer,
             incorrect_answers: thisQuestion.incorrect_answers
           }
-        })
+        }),
+        path
       }
       return formattedQuestion
     })
@@ -90,8 +90,8 @@ export default async function scrapeAllQuizzes (): Promise<void> {
     console.log(formattedQuestions[2].difficulty, formattedQuestions[2].questions.length)
 
     formattedQuestions.map(async quiz => {
-      const firestoreQuiz = quizMultipleToFirestore(quiz)
-      await setDoc(doc(db, 'store/api/multipleChoiceQuiz', quiz.id), firestoreQuiz)
+      const firestoreQuiz = quizMultipleToFirestore(quiz, path)
+      await setDoc(doc(db, path, quiz.id), firestoreQuiz)
     })
   })
 }

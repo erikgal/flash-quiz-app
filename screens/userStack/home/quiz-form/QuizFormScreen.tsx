@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, TextInput, Keyboard } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
 import RoundButton from '../../../../components/buttons/RoundButton'
 import { RootState } from '../../../../store'
-import { saveUserAnswers } from '../../../../utils/redux/quizSlice'
+import { saveUserFormAnswers } from '../../../../utils/redux/quizSlice'
 
 import { QuestionForm, RouterProps, InputMap, QuizForm } from '../../../../types'
 
@@ -50,7 +50,7 @@ const QuizWriteScreen: React.FC = ({ navigation }: RouterProps) => {
         setUserAnswers(tempAnswers)
       })
     } else {
-      dispatch(saveUserAnswers({ corrections: previousCorrections, userAnswers: previousAnswers }))
+      dispatch(saveUserFormAnswers({ corrections: previousCorrections, userAnswers: previousAnswers }))
       navigation.navigate('SummaryFormScreen')
     }
   }, [questionIndex])
@@ -185,6 +185,9 @@ const QuizWriteScreen: React.FC = ({ navigation }: RouterProps) => {
           />
         </>
       )}
+      <Text style={styles.questionNumber}>
+        {`${questionIndex + 1}/${quiz!.questions.length}`}
+      </Text>
     </View>
   )
 }
@@ -245,6 +248,13 @@ const styles = StyleSheet.create({
     fontSize: 28
     // borderWidth: 2,
     // borderColor: 'green'
+  },
+  questionNumber: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    padding: 5,
+    fontSize: 20
   }
 })
 

@@ -29,6 +29,7 @@ export interface Quiz {
   'type': QuizType
   'downloads': number
   'raitings': Raiting[]
+  'path'?: string
 }
 
 export interface QuizForm extends Quiz {
@@ -70,6 +71,7 @@ export interface FirestoreQuiz {
   'creatorName': string
   'downloads': number
   'raitings': Raiting[]
+  'path': string
 }
 
 export interface FirestoreQuizForm extends FirestoreQuiz {
@@ -96,7 +98,12 @@ export interface InputMap {
   [key: number]: string
 }
 
-export interface UserAnswers {
+export interface UserAnswersForm {
   corrections: boolean[][]
   userAnswers: InputMap[]
+}
+
+export interface UserAnswersMultiple {
+  corrections: boolean[]
+  userAnswers: string[]
 }
