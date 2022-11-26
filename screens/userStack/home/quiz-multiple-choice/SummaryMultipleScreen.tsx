@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
     // borderColor: 'yellow'
   },
   statsText: {
-    fontSize: 19,
+    fontSize: 18,
     fontWeight: 'bold'
   },
   textBottom: {

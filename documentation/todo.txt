@@ -1,7 +1,5 @@
 TASKS:
 
-- Add multiple choice quiz play screens
-
 - In the PreviewScreens (both home and store), add some kind of way to preview/reveal 
 the questions
 
@@ -9,7 +7,7 @@ the questions
 
 - Add a raiting system (1-5 stars) and download count
 
-- Add a shuffle mode which directle utilizes an api
+- Add a shuffle mode
 
 - Add search functionality in both home and store with andvanced filter functionality
 
