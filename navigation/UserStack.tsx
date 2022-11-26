@@ -11,6 +11,8 @@ import ProfileScreen from '../screens/userStack/profile/ProfileScreen'
 import StoreScreen from '../screens/userStack/store/StoreScreen'
 import StorePreviewScreen from '../screens/userStack/store/StorePreviewScreen'
 import UploadScreen from '../screens/userStack/store/UploadScreen'
+import CreateQuizScreen from '../screens/userStack/home/CreateQuizScreen'
+import AddQuestionToQuizScreen from '../screens/userStack/home/AddInformationToQuizScreen'
 
 const HomeStack = createNativeStackNavigator()
 const HomeStackScreen: React.FC = () => {
@@ -20,6 +22,16 @@ const HomeStackScreen: React.FC = () => {
       <HomeStack.Screen name="HomePreviewScreen" options={{ title: 'Preview' }} component={HomePreviewScreen}/>
       <HomeStack.Screen name="QuizFormScreen" options={{ title: 'Quiz' }} component={QuizFormScreen}/>
       <HomeStack.Screen name="SummaryFormScreen" options={{ title: 'Summary', headerBackVisible: false }} component={SummaryFormScreen}/>
+      <HomeStack.Screen
+        name="CreateQuizScreen"
+        options={{ title: 'Create Quiz', headerBackVisible: true }}
+        component={CreateQuizScreen}
+      />
+      <HomeStack.Screen
+        name="AddQuestionToQuizScreen"
+        options={{ title: 'Add Questions', headerBackVisible: true }}
+        component={AddQuestionToQuizScreen}
+      />
     </HomeStack.Navigator>
   )
 }
@@ -48,23 +60,26 @@ const Tab = createBottomTabNavigator()
 
 const UserStack: React.FC = () => {
   return (
-    <NavigationContainer >
-      <Tab.Navigator initialRouteName="Home" screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName
+    <NavigationContainer>
+      <Tab.Navigator
+        initialRouteName="Home"
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName
 
-          if (route.name === 'Home') {
-            iconName = 'home'
-          } else if (route.name === 'Store') {
-            iconName = 'cloud-download'
-          } else if (route.name === 'Profile') {
-            iconName = 'person'
-          }
+            if (route.name === 'Home') {
+              iconName = 'home'
+            } else if (route.name === 'Store') {
+              iconName = 'cloud-download'
+            } else if (route.name === 'Profile') {
+              iconName = 'person'
+            }
 
-          return <Icon name={iconName} size={size} color={color} />
-        },
-        headerShown: false
-      })}>
+            return <Icon name={iconName} size={size} color={color} />
+          },
+          headerShown: false
+        })}
+      >
         <Tab.Screen name="Home" component={HomeStackScreen} />
         <Tab.Screen name="Store" component={StoreStackScreen} />
         <Tab.Screen name="Profile" component={ProfileStackScreen} />

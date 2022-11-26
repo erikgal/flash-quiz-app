@@ -77,6 +77,7 @@ const HomeScreen: React.FC = ({ navigation }: RouterProps) => {
 
   const handleAdd = (): void => {
     // TODO add function to create new quiz here
+    navigation.navigate('CreateQuizScreen')
   }
 
   return (

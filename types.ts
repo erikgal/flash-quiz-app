@@ -95,3 +95,18 @@ export interface UserAnswers {
   corrections: boolean[][]
   userAnswers: InputMap[]
 }
+export interface AddInformationToQuizScreenProps {
+  name: string
+  description: string
+  difficulty: number
+  theme: string
+}
+export interface QuestionsCreateQuizProps {
+  index: number
+  handleNewQuestion: () => void
+  handleRemoveQuestion: (i: number) => void
+  handleQuestionChange: (questionInput: string, i: number) => void
+  handleAnswerChange: (questionInput: string, i: number) => void
+  questions: QuestionForm[]
+  questionFromParent: QuestionForm
+}
