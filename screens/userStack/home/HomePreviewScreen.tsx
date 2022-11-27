@@ -1,22 +1,34 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { StyleSheet, View, Text } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../../../store'
-import { Difficulties, Quiz, QuizType, QuizForm, RouterProps, QuizMultiple } from '../../../types'
+import { Difficulties, Quiz, QuizType, QuizForm, RouterProps, QuizMultiple, QuestionForm, QuestionMultiple } from '../../../types'
 import RoundButton from '../../../components/buttons/RoundButton'
 import { Timestamp } from 'firebase/firestore'
 import { setCurrentQuizForm, setCurrentQuizMultiple } from '../../../utils/redux/quizSlice'
+import RNPickerSelect from 'react-native-picker-select'
+import { COLORS } from '../../../assets/colors'
+import { Chevron } from 'react-native-shapes'
+import durstenfeldShuffle from '../../../utils/functions/durstenfeldShuffle'
+import { generateDropdownData } from '../../../utils/functions/generateDropdownData'
 
 const HomePreviewScreen: React.FC = ({ navigation }: RouterProps) => {
   const quiz: Quiz | null = useSelector((state: RootState) => state.quiz.currentQuiz)
+  const [selected, setSelected] = useState<number>()
+
   const dispatch = useDispatch()
 
   const handleStart = (): void => {
-    if (quiz!.type === QuizType.FormQuiz) {
-      dispatch(setCurrentQuizForm(quiz as QuizForm))
+    let editedQuiz: Quiz = quiz!
+    if (selected !== null) {
+      const shuffeledQuestions = durstenfeldShuffle([...quiz!.questions] as any[]) as QuestionForm[] | QuestionMultiple[]
+      editedQuiz = { ...quiz!, questions: shuffeledQuestions.slice(0, selected) }
+    }
+    if (editedQuiz.type === QuizType.FormQuiz) {
+      dispatch(setCurrentQuizForm(editedQuiz as QuizForm))
       navigation.navigate('QuizFormScreen')
-    } else if (quiz!.type === QuizType.MultipleChoiceQuiz) {
-      dispatch(setCurrentQuizMultiple(quiz as QuizMultiple))
+    } else if (editedQuiz.type === QuizType.MultipleChoiceQuiz) {
+      dispatch(setCurrentQuizMultiple(editedQuiz as QuizMultiple))
       navigation.navigate('QuizMultipleScreen')
     }
   }
@@ -47,6 +59,17 @@ const HomePreviewScreen: React.FC = ({ navigation }: RouterProps) => {
                 <Text style={styles.theme}>{Object.values(Difficulties)[quiz.difficulty]}</Text>
               </View>
             </View>
+            <RNPickerSelect
+              placeholder={{ value: quiz.questions.length, label: 'Select number of questions...          ' }}
+              onValueChange={value => setSelected(value)}
+              items={generateDropdownData(quiz.questions.length)}
+              style={pickerSelectStyles}
+              // @ts-expect-error
+              Icon={() => <Chevron size={1.5} color="gray" onPress = {() => console.log('hei')
+              }/>}
+              useNativeAndroidPickerStyle={false}
+              fixAndroidTouchableBug={true}
+              />
           </View>
           <View style={styles.settings}>
             <RoundButton text={'Start'} onPress={handleStart} loading={false} disabled={false}></RoundButton>
@@ -114,11 +137,28 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'flex-end'
-    // borderWidth: 2,
-    // borderColor: 'green'
   },
   button: {
     padding: 100
+  }
+})
+
+const pickerSelectStyles = StyleSheet.create({
+  inputAndroid: {
+    fontSize: 16,
+    textAlign: 'center',
+    minWidth: '85%',
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderWidth: 0.5,
+    borderColor: COLORS.cyan,
+    borderRadius: 8,
+    color: 'black',
+    paddingRight: 30 // to ensure the text is never behind the icon
+  },
+  iconContainer: {
+    top: 15,
+    right: 15
   }
 })
 

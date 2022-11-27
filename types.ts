@@ -30,6 +30,7 @@ export interface Quiz {
   'downloads': number
   'raitings': Raiting[]
   'path'?: string
+  'questions': QuestionForm[] | QuestionMultiple[]
 }
 
 export interface QuizForm extends Quiz {
