@@ -1,44 +1,42 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { ScrollView, StyleSheet, View, Text } from 'react-native'
-import { ActivityIndicator } from 'react-native-paper'
+import { ActivityIndicator, Searchbar } from 'react-native-paper'
 import { Quiz, RouterProps } from '../../../types'
 import PlusButton from '../../../components/buttons/PlusButton'
-import { RootState } from '../../../store'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { loadQuizzes, setCurrentQuiz } from '../../../utils/redux/quizSlice'
 import 'react-native-get-random-values'
 // import { v4 as uuidv4 } from 'uuid'
 import { db } from '../../../firebaseConfig'
-import { collection, deleteDoc, doc, getDocs, onSnapshot } from 'firebase/firestore'
+import { collection, deleteDoc, doc, onSnapshot } from 'firebase/firestore'
 import { useAuthentication } from '../../../utils/hooks/useAuthentication'
 import { COLORS } from '../../../assets/colors'
-import quizFormFromFirestore from '../../../utils/functions/format-quiz/quizFormFromFirestore'
 import CancelEditDeleteModal from '../../../components/modals/CancelEditDeleteModal'
 import wrapAsyncFunction from '../../../utils/functions/wrapAsyncFunction'
 import QuizList from '../../../components/list/QuizList'
 import AreYouSureModal from '../../../components/modals/AreYouSureDeleteModal'
-import quizMultipleFromFirestore from '../../../utils/functions/format-quiz/quizMultipleFromFirestore'
+import fetchQuizzesToUser from '../../../utils/services/fetchQuizzesToUser'
+import debounce from 'lodash.debounce'
 
 const HomeScreen: React.FC = ({ navigation }: RouterProps) => {
   const [loading, setLoading] = useState<boolean>(true)
   const [visible, setVisible] = useState(false)
   const [visibleDelete, setVisibleDelete] = useState(false)
   const [longPressQuiz, setLongPressQuiz] = useState<Quiz>()
-  const quizList: Quiz[] = useSelector((state: RootState) => state.quiz.quizzes)
+  const [search, setSearch] = useState<string>('')
+  const [quizList, setQuizList] = useState<Quiz[]>([])
+  const [filteredQuizList, setFilteredQuizList] = useState<Quiz[]>([])
   const { user } = useAuthentication()
   const dispatch = useDispatch()
 
+  useEffect(() => {
+    dispatch(setCurrentQuiz(null))
+  }, [])
+
   async function fetchQuizzes (): Promise<void> {
-    const fetchedQuizzes: Quiz[] = []
-    const formSnapshot = await getDocs(collection(db, `users/${user!.uid}/formQuiz`))
-    formSnapshot.forEach(docx => {
-      fetchedQuizzes.push(quizFormFromFirestore(docx.data(), docx.id))
-    })
-    const apiSnapshot = await getDocs(collection(db, `users/${user!.uid}/multipleChoiceQuiz`))
-    apiSnapshot.forEach(docx => {
-      fetchedQuizzes.push(quizMultipleFromFirestore(docx.data(), docx.id))
-    })
+    const fetchedQuizzes: Quiz[] = await fetchQuizzesToUser(user!.uid)
     dispatch(loadQuizzes(fetchedQuizzes))
+    setQuizList(fetchedQuizzes)
     setLoading(false)
   }
 
@@ -48,18 +46,14 @@ const HomeScreen: React.FC = ({ navigation }: RouterProps) => {
         void fetchQuizzes()
       }
       // add event listener for real time update
-      onSnapshot(collection(db, `users/${user.uid}/formQuiz`), (snapshot) => {
+      onSnapshot(collection(db, `users/${user.uid}/formQuiz`), snapshot => {
         void fetchQuizzes()
       })
-      onSnapshot(collection(db, `users/${user.uid}/multipleChoiceQuiz`), (snapshot) => {
+      onSnapshot(collection(db, `users/${user.uid}/multipleChoiceQuiz`), snapshot => {
         void fetchQuizzes()
       })
     }
   }, [user])
-
-  useEffect(() => {
-    dispatch(setCurrentQuiz(null))
-  }, [])
 
   const handleQuizPress = (quiz: Quiz): void => {
     dispatch(setCurrentQuiz(quiz))
@@ -85,18 +79,49 @@ const HomeScreen: React.FC = ({ navigation }: RouterProps) => {
     // TODO add function to create new quiz here
   }
 
+  const filterContent = (text): void => {
+    if (text !== '') {
+      setFilteredQuizList(quizList.filter(quiz => {
+        return quiz.title.includes(text) || quiz.description.includes(text) || quiz.theme.includes(text)
+      }))
+    } else {
+      setFilteredQuizList([])
+    }
+  }
+
+  const debouncedSearch = useMemo(
+    () =>
+      debounce(text => {
+        filterContent(text)
+      }, 250),
+    [filterContent]
+  )
+
+  const handleChange = useCallback(
+    text => {
+      setSearch(text)
+      debouncedSearch(text)
+    },
+    [debouncedSearch]
+  )
+
+  const displayQuizList = search !== '' ? filteredQuizList : quizList
+
   return (
     <View style={styles.container}>
-      {loading && quizList.length === 0
+      <View style={styles.autocompleteContainer}>
+        <Searchbar style={{ borderRadius: 0 }} placeholder="Search" onChangeText={handleChange} value={search} />
+      </View>
+      {loading && displayQuizList.length === 0
         ? (
         <View style={styles.activityContainer}>
           <ActivityIndicator size={45} color={COLORS.cyan} />
         </View>
           )
-        : quizList.length > 0
+        : displayQuizList.length > 0
           ? (
         <ScrollView style={styles.scrollView}>
-          <QuizList quizList={quizList} onPress={handleQuizPress} onLongPress={handleLongPress}/>
+          <QuizList quizList={displayQuizList} onPress={handleQuizPress} onLongPress={handleLongPress} />
         </ScrollView>
             )
           : (
@@ -110,16 +135,16 @@ const HomeScreen: React.FC = ({ navigation }: RouterProps) => {
       <CancelEditDeleteModal
         onDismiss={() => setVisible(false)}
         visible={visible}
-        quizName={(longPressQuiz != null) ? longPressQuiz.title : ''}
+        quizName={longPressQuiz != null ? longPressQuiz.title : ''}
         onCancel={() => setVisible(false)}
         onDelete={handlePressDelete}
       />
       <AreYouSureModal
-      onDismiss={() => setVisibleDelete(false)}
-      visible={visibleDelete}
-      onCancel={() => setVisibleDelete(false)}
-      onDelete = {wrapAsyncFunction(handleDelete)}
-      action= {'delete this quiz'}
+        onDismiss={() => setVisibleDelete(false)}
+        visible={visibleDelete}
+        onCancel={() => setVisibleDelete(false)}
+        onDelete={wrapAsyncFunction(handleDelete)}
+        action={'delete this quiz'}
       />
     </View>
   )
@@ -169,6 +194,9 @@ const styles = StyleSheet.create({
   noContentText: {
     fontSize: 18,
     textAlign: 'center'
+  },
+  autocompleteContainer: {
+    minWidth: '99.5%'
   }
 })
 
