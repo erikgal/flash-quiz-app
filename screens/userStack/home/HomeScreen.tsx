@@ -87,6 +87,7 @@ const HomeScreen: React.FC = ({ navigation }: RouterProps) => {
     } else {
       setFilteredQuizList([])
     }
+    setLoading(false)
   }
 
   const debouncedSearch = useMemo(
@@ -99,6 +100,7 @@ const HomeScreen: React.FC = ({ navigation }: RouterProps) => {
 
   const handleChange = useCallback(
     text => {
+      setLoading(true)
       setSearch(text)
       debouncedSearch(text)
     },
