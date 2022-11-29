@@ -6,6 +6,7 @@ export default function quizMultipleToFirestore (quiz: QuizMultiple, path: strin
   const firestoreQuiz: FirestoreQuizMultiple = {
     ...restQuiz,
     date: new Timestamp(restQuiz.date.seconds, restQuiz.date.nanoseconds),
+    raitings: {},
     path
   }
   return firestoreQuiz

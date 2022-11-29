@@ -28,7 +28,6 @@ export interface Quiz {
   'creatorName': string
   'type': QuizType
   'downloads': number
-  'raitings': Raiting[]
   'path'?: string
   'questions': QuestionForm[] | QuestionMultiple[]
 }
@@ -58,8 +57,8 @@ export interface FirestoreMultipleQuestion {
   'incorrect_answers': string[]
 }
 
-export interface Raiting {
-  'creatorId': number
+export interface Raitings {
+  [userId: string]: number
 }
 
 export interface FirestoreQuiz {
@@ -71,7 +70,7 @@ export interface FirestoreQuiz {
   'creatorId': string
   'creatorName': string
   'downloads': number
-  'raitings': Raiting[]
+  'raitings': Raitings
   'path': string
 }
 

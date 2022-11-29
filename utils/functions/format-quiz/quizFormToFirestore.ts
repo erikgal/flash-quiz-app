@@ -14,6 +14,7 @@ export default function quizFormToFirestore (quiz: QuizForm, path: string): Fire
       }
     }),
     date: new Timestamp(restQuiz.date.seconds, restQuiz.date.nanoseconds),
+    raitings: {},
     path
   }
   return firestoreQuiz
