@@ -17,11 +17,16 @@ export interface QuestionMultiple {
   'incorrect_answers': string[]
 }
 
+export interface UTCEpochTime {
+  nanoseconds: number
+  seconds: number
+}
+
 export interface Quiz {
   'title': string
   'id': string
   'description': string
-  'date': Timestamp
+  'date': UTCEpochTime
   'difficulty': number
   'theme': string
   'creatorId': string

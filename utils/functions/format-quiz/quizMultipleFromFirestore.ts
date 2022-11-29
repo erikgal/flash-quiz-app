@@ -1,8 +1,7 @@
-import { DocumentData } from 'firebase/firestore'
-import { QuizMultiple } from '../../../types'
+import { FirestoreQuizMultiple, QuizMultiple } from '../../../types'
 
-export default function quizMultipleFromFirestore (doc: DocumentData, id: string): QuizMultiple {
-  const quiz = {
+export default function quizMultipleFromFirestore (doc: FirestoreQuizMultiple, id: string): QuizMultiple {
+  const quiz: QuizMultiple = {
     ...doc,
     id,
     date: {
@@ -10,5 +9,5 @@ export default function quizMultipleFromFirestore (doc: DocumentData, id: string
       seconds: doc.date.seconds
     }
   }
-  return quiz as QuizMultiple
+  return quiz
 }
