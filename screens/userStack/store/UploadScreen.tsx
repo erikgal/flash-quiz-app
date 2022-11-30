@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { ScrollView, StyleSheet, View, Text } from 'react-native'
 import { ActivityIndicator, Snackbar } from 'react-native-paper'
-import { Quiz, QuizForm, RouterProps } from '../../../types'
+import { FirestoreQuizForm, Quiz, QuizForm, RouterProps } from '../../../types'
 import 'react-native-get-random-values'
 // import { v4 as uuidv4 } from 'uuid'
 import { db } from '../../../firebaseConfig'
@@ -35,7 +35,7 @@ const UploadScreen: React.FC = ({ navigation }: RouterProps) => {
     const userQuizzes: Quiz[] = []
     const querySnapshot = await getDocs(collection(db, `users/${user!.uid}/formQuiz`))
     querySnapshot.forEach(docx => {
-      userQuizzes.push(quizFormFromFirestore(docx.data(), docx.id))
+      userQuizzes.push(quizFormFromFirestore(docx.data() as FirestoreQuizForm, docx.id))
     })
     const filteredQuizzes = await filterUploadedQuizzes(userQuizzes)
     setQuizList(filteredQuizzes)
