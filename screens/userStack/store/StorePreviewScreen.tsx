@@ -20,13 +20,14 @@ const StorePreviewScreen: React.FC = ({ navigation }: RouterProps) => {
   const { user } = useAuthentication()
 
   useEffect(() => {
-    async function fetchData (): Promise<void> {
-      const document = await getDoc(doc(db, `users/${user!.uid}/formQuiz/${quiz!.id}`))
-      setIsDownloaded(document.data() !== undefined)
+    async function checkIfDownloaded (): Promise<void> {
+      const formDocument = await getDoc(doc(db, `users/${user!.uid}/formQuiz/${quiz!.id}`))
+      const multipleDocument = await getDoc(doc(db, `users/${user!.uid}/multipleChoiceQuiz/${quiz!.id}`))
+      setIsDownloaded(formDocument.data() !== undefined || multipleDocument.data() !== undefined)
       setIsMounted(true)
     }
     if (user != null) {
-      void fetchData()
+      void checkIfDownloaded()
     }
   }, [user])
 
@@ -39,9 +40,9 @@ const StorePreviewScreen: React.FC = ({ navigation }: RouterProps) => {
 
   const handleDownload = async (): Promise<void> => {
     setLoading(true)
-    const docSnap = await getDoc(doc(db, `store/userCreated/formQuiz/${quiz!.id}`))
+    const docSnap = await getDoc(doc(db, `${quiz!.path!}/${quiz!.id}`))
     if (docSnap.exists() && user != null) {
-      await setDoc(doc(db, `users/${user.uid}/formQuiz`, quiz!.id), docSnap.data())
+      await setDoc(doc(db, `users/${user.uid}/${quiz!.type}`, quiz!.id), docSnap.data())
       setIsDownloaded(true)
       setVisible(true)
     } else {
@@ -71,11 +72,11 @@ const StorePreviewScreen: React.FC = ({ navigation }: RouterProps) => {
                 <Text style={styles.description}>{quiz.description}</Text>
               </View>
               <View style={styles.textBottom}>
-                <View style={{ flexDirection: 'row' }}>
+                <View style={styles.themeDiffContainer}>
                   <Text style={styles.themeDiff}>{'Theme: '}</Text>
                   <Text style={styles.theme}>{quiz.theme}</Text>
                 </View>
-                <View style={{ flexDirection: 'row' }}>
+                <View style={styles.themeDiffContainer}>
                   <Text style={styles.themeDiff}>{'Difficulty: '}</Text>
                   <Text style={styles.theme}>{Object.values(Difficulties)[quiz.difficulty]}</Text>
                 </View>
@@ -92,7 +93,7 @@ const StorePreviewScreen: React.FC = ({ navigation }: RouterProps) => {
               text={'Download'}
               loading={loading}
               onPress={wrapAsyncFunction(handleDownload)}
-              disabled={isDownloaded}
+              disabled={isDownloaded || !isMounted}
             ></Button>
           </View>
         </View>
@@ -149,6 +150,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly'
     // borderWidth: 2,
     // borderColor: 'green'
+  },
+  themeDiffContainer: {
+    flex: 1,
+    alignItems: 'center'
   },
   themeDiff: {
     fontSize: 20,

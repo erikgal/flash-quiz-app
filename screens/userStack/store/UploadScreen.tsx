@@ -8,8 +8,8 @@ import { db } from '../../../firebaseConfig'
 import { collection, doc, getDocs, setDoc } from 'firebase/firestore'
 import { useAuthentication } from '../../../utils/hooks/useAuthentication'
 import { COLORS } from '../../../assets/colors'
-import formatQuizFromFirestore from '../../../utils/functions/format-quiz/quizFormFromFirestore'
-import formatQuizToFirestore from '../../../utils/functions/format-quiz/quizFormToFirestore'
+import quizFormFromFirestore from '../../../utils/functions/format-quiz/quizFormFromFirestore'
+import quizFormToFirestore from '../../../utils/functions/format-quiz/quizFormToFirestore'
 import wrapAsyncFunction from '../../../utils/functions/wrapAsyncFunction'
 import QuizList from '../../../components/list/QuizList'
 import AreYouSureUploadModal from '../../../components/modals/AreYouSureUploadModal'
@@ -35,7 +35,7 @@ const UploadScreen: React.FC = ({ navigation }: RouterProps) => {
     const userQuizzes: Quiz[] = []
     const querySnapshot = await getDocs(collection(db, `users/${user!.uid}/formQuiz`))
     querySnapshot.forEach(docx => {
-      userQuizzes.push(formatQuizFromFirestore(docx.data(), docx.id))
+      userQuizzes.push(quizFormFromFirestore(docx.data(), docx.id))
     })
     const filteredQuizzes = await filterUploadedQuizzes(userQuizzes)
     setQuizList(filteredQuizzes)
@@ -61,7 +61,7 @@ const UploadScreen: React.FC = ({ navigation }: RouterProps) => {
   }
 
   const handleUpload = async (): Promise<void> => {
-    const firestoreQuiz = formatQuizToFirestore(selectedQuiz!)
+    const firestoreQuiz = quizFormToFirestore(selectedQuiz!, 'store/userCreated/formQuiz')
     await setDoc(doc(db, 'store/userCreated/formQuiz', selectedQuiz!.id), firestoreQuiz)
     void fetchQuizzes()
     setUploadVisible(false)

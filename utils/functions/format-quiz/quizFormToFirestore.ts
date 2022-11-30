@@ -1,7 +1,7 @@
 import { Timestamp } from 'firebase/firestore'
 import { FirestoreQuizForm, QuizForm } from '../../../types'
 
-export default function quizFormToFirestore (quiz: QuizForm): FirestoreQuizForm {
+export default function quizFormToFirestore (quiz: QuizForm, path: string): FirestoreQuizForm {
   const { id, ...restQuiz } = quiz
   const firestoreQuiz: FirestoreQuizForm = {
     ...restQuiz,
@@ -13,7 +13,9 @@ export default function quizFormToFirestore (quiz: QuizForm): FirestoreQuizForm 
         })
       }
     }),
-    date: new Timestamp(restQuiz.date.seconds, restQuiz.date.nanoseconds)
+    date: new Timestamp(restQuiz.date.seconds, restQuiz.date.nanoseconds),
+    raitings: {},
+    path
   }
   return firestoreQuiz
 }

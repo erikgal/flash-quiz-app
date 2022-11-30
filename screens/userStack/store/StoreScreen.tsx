@@ -1,25 +1,33 @@
 import { collection, getDocs, onSnapshot } from 'firebase/firestore'
-import React, { useEffect, useState } from 'react'
-import { View, ActivityIndicator, StyleSheet, FlatList } from 'react-native'
-import { List } from 'react-native-paper'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { View, ActivityIndicator, StyleSheet, FlatList, Text } from 'react-native'
+import { List, Searchbar } from 'react-native-paper'
 import { useDispatch } from 'react-redux'
 import { COLORS } from '../../../assets/colors'
 import UploadButton from '../../../components/buttons/UploadButtonButton'
 import { db } from '../../../firebaseConfig'
-import { Quiz, QuizForm, RouterProps } from '../../../types'
+import { Quiz, RouterProps } from '../../../types'
 import quizFormFromFirestore from '../../../utils/functions/format-quiz/quizFormFromFirestore'
+import quizMultipleFromFirestore from '../../../utils/functions/format-quiz/quizMultipleFromFirestore'
 import { setCurrentQuiz } from '../../../utils/redux/storeSlice'
+import debounce from 'lodash.debounce'
 
 const StoreScreen: React.FC = ({ navigation }: RouterProps) => {
   const [loading, setLoading] = useState<boolean>(true)
   const [quizList, setQuizList] = useState<Quiz[]>([])
+  const [filteredQuizList, setFilteredQuizList] = useState<Quiz[]>([])
+  const [search, setSearch] = useState<string>('')
   const dispatch = useDispatch()
 
-  async function initialFetch (): Promise<void> {
-    const fetchedQuizzes: QuizForm[] = []
-    const querySnapshot = await getDocs(collection(db, 'store/userCreated/formQuiz'))
-    querySnapshot.forEach(docx => {
+  async function fetchQuizzes (): Promise<void> {
+    const fetchedQuizzes: Quiz[] = []
+    const formSnapshot = await getDocs(collection(db, 'store/userCreated/formQuiz'))
+    formSnapshot.forEach(docx => {
       fetchedQuizzes.push(quizFormFromFirestore(docx.data(), docx.id))
+    })
+    const apiSnapshot = await getDocs(collection(db, 'store/api/multipleChoiceQuiz'))
+    apiSnapshot.forEach(docx => {
+      fetchedQuizzes.push(quizMultipleFromFirestore(docx.data(), docx.id))
     })
     setQuizList(fetchedQuizzes)
     setLoading(false)
@@ -27,11 +35,14 @@ const StoreScreen: React.FC = ({ navigation }: RouterProps) => {
 
   useEffect(() => {
     if (quizList.length === 0) {
-      void initialFetch()
+      void fetchQuizzes()
     }
     // add event listener for real time update
     onSnapshot(collection(db, 'store/userCreated/formQuiz'), snapshot => {
-      setQuizList(snapshot.docs.map(docx => quizFormFromFirestore(docx.data(), docx.id)))
+      void fetchQuizzes()
+    })
+    onSnapshot(collection(db, 'store/api/multipleChoiceQuiz'), snapshot => {
+      void fetchQuizzes()
     })
   }, [])
 
@@ -54,19 +65,63 @@ const StoreScreen: React.FC = ({ navigation }: RouterProps) => {
     )
   }
 
+  const filterContent = (text): void => {
+    if (text !== '') {
+      setFilteredQuizList(
+        quizList.filter(quiz => {
+          return quiz.title.includes(text) || quiz.description.includes(text) || quiz.theme.includes(text)
+        })
+      )
+    } else {
+      setFilteredQuizList([])
+    }
+    setLoading(false)
+  }
+
+  const debouncedSearch = useMemo(
+    () =>
+      debounce(async text => {
+        filterContent(text)
+      }, 250),
+    [filterContent]
+  )
+
+  const handleChange = useCallback(
+    text => {
+      setSearch(text)
+      setLoading(true)
+      debouncedSearch(text)
+    },
+    [debouncedSearch]
+  )
+
+  const displayQuizList = search !== '' ? filteredQuizList : quizList
+
   return (
     <View style={styles.container}>
+      <View style={styles.autocompleteContainer}>
+        <Searchbar style={{ borderRadius: 0 }} placeholder="Search" onChangeText={handleChange} value={search} />
+      </View>
       {loading
         ? (
         <View style={styles.activityContainer}>
           <ActivityIndicator size={45} color={COLORS.cyan} />
         </View>
           )
-        : (
-            quizList.length > 0 && (
-          <FlatList style={styles.flatList} data={quizList} renderItem={renderItem} keyExtractor={item => item.id} />
+        : displayQuizList.length > 0
+          ? (
+        <FlatList
+          style={styles.flatList}
+          data={displayQuizList}
+          renderItem={renderItem}
+          keyExtractor={item => item.id}
+        />
             )
-          )}
+          : (
+        <View style={styles.noContentContainer}>
+          <Text style={styles.noContentText}>{"You don't have any quizzes, create or download some!"}</Text>
+        </View>
+            )}
       <View style={styles.buttonContainer}>
         <UploadButton onPress={() => navigation.navigate('UploadScreen')} size={70} />
       </View>
@@ -85,7 +140,8 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     alignItems: 'flex-end',
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-end',
+    maxHeight: 0
   },
   flatList: {
     flex: 1,
@@ -117,6 +173,9 @@ const styles = StyleSheet.create({
   noContentText: {
     fontSize: 18,
     textAlign: 'center'
+  },
+  autocompleteContainer: {
+    minWidth: '99.5%'
   }
 })
 

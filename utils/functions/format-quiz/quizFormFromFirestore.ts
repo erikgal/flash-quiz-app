@@ -1,8 +1,7 @@
-import { DocumentData } from 'firebase/firestore'
-import { QuizForm } from '../../../types'
+import { FirestoreQuizForm, QuizForm } from '../../../types'
 
-export default function quizFormFromFirestore (doc: DocumentData, id: string): QuizForm {
-  const quiz = {
+export default function quizFormFromFirestore (doc: FirestoreQuizForm, id: string): QuizForm {
+  const quiz: QuizForm = {
     ...doc,
     id,
     questions: doc.questions.map(questionObj => {
@@ -18,5 +17,5 @@ export default function quizFormFromFirestore (doc: DocumentData, id: string): Q
       seconds: doc.date.seconds
     }
   }
-  return quiz as QuizForm
+  return quiz
 }

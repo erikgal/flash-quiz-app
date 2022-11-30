@@ -13,6 +13,8 @@ import StorePreviewScreen from '../screens/userStack/store/StorePreviewScreen'
 import UploadScreen from '../screens/userStack/store/UploadScreen'
 import CreateQuizScreen from '../screens/userStack/home/CreateQuizScreen'
 import AddQuestionToQuizScreen from '../screens/userStack/home/AddInformationToQuizScreen'
+import QuizMultipleScreen from '../screens/userStack/home/quiz-multiple-choice/QuizMultipleScreen'
+import SummaryMultipleScreen from '../screens/userStack/home/quiz-multiple-choice/SummaryMultipleScreen'
 
 const HomeStack = createNativeStackNavigator()
 const HomeStackScreen: React.FC = () => {
@@ -32,6 +34,8 @@ const HomeStackScreen: React.FC = () => {
         options={{ title: 'Add Questions', headerBackVisible: true }}
         component={AddQuestionToQuizScreen}
       />
+      <HomeStack.Screen name="QuizMultipleScreen" options={{ title: 'Quiz' }} component={QuizMultipleScreen}/>
+      <HomeStack.Screen name="SummaryMultipleScreen" options={{ title: 'Summary', headerBackVisible: false }} component={SummaryMultipleScreen}/>
     </HomeStack.Navigator>
   )
 }

@@ -1,18 +1,25 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { Quiz, QuizForm, UserAnswers } from '../../types'
+import { Quiz, QuizForm, QuizMultiple, UserAnswersForm, UserAnswersMultiple } from '../../types'
 
 interface InitalQuizState {
   quizzes: Quiz[]
   currentQuiz: Quiz | null
   currentQuizForm: QuizForm | null
-  userAnswers: UserAnswers
+  currentQuizMultiple: QuizMultiple | null
+  userAnswersForm: UserAnswersForm
+  userAnswersMultiple: UserAnswersMultiple
 }
 
 const initialState: InitalQuizState = {
   quizzes: [],
   currentQuiz: null,
   currentQuizForm: null,
-  userAnswers: {
+  currentQuizMultiple: null,
+  userAnswersForm: {
+    corrections: [],
+    userAnswers: []
+  },
+  userAnswersMultiple: {
     corrections: [],
     userAnswers: []
   }
@@ -33,14 +40,20 @@ export const quizSlice = createSlice({
     setCurrentQuiz: (state, action: PayloadAction<Quiz | null>) => {
       state.currentQuiz = action.payload
     },
-    setCurrentQuizWrite: (state, action: PayloadAction<QuizForm | null>) => {
+    setCurrentQuizForm: (state, action: PayloadAction<QuizForm | null>) => {
       state.currentQuizForm = action.payload
     },
-    saveUserAnswers: (state, action: PayloadAction<UserAnswers>) => {
-      state.userAnswers = action.payload
+    setCurrentQuizMultiple: (state, action: PayloadAction<QuizMultiple | null>) => {
+      state.currentQuizMultiple = action.payload
+    },
+    saveUserFormAnswers: (state, action: PayloadAction<UserAnswersForm>) => {
+      state.userAnswersForm = action.payload
+    },
+    saveUserMultipleAnswers: (state, action: PayloadAction<UserAnswersMultiple>) => {
+      state.userAnswersMultiple = action.payload
     }
   }
 })
 
-export const { addQuiz, loadQuizzes, setCurrentQuiz, setCurrentQuizWrite, saveUserAnswers } = quizSlice.actions
+export const { addQuiz, loadQuizzes, setCurrentQuiz, setCurrentQuizForm, setCurrentQuizMultiple, saveUserFormAnswers, saveUserMultipleAnswers } = quizSlice.actions
 export default quizSlice.reducer
