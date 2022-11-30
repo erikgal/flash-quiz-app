@@ -23,15 +23,14 @@ const QuestionsCreateQuiz: React.FC<QuestionsCreateQuizProps> = ({
   const [answer, setAnswer] = useState<string>('')
 
   const submitQuestion = (): void => {
-    if (question.length !== 0 && !isSubmitted && answer.length >= 1 && questionIsToggled) {
-      if (!question.endsWith('?')) {
-        setQuestion(question + '?')
+    if (question.length !== 0 && !isSubmitted) {
+      if (questionIsToggled && answer.length >= 1) {
+        if (!question.endsWith('?')) {
+          setQuestion(question + '?')
+          setIsSubmitted(true)
+        }
       }
       setIsSubmitted(true)
-      handleAnswerChange(answer, index)
-    } else if (question.length !== 0 && !isSubmitted && !questionIsToggled) {
-      setIsSubmitted(true)
-      handleQuestionChange(question, index)
     } else if (isSubmitted) {
       setIsSubmitted(false)
       if (!questionIsToggled) {
@@ -62,14 +61,26 @@ const QuestionsCreateQuiz: React.FC<QuestionsCreateQuizProps> = ({
   useEffect(() => {
     if (!isSubmitted) {
       changeToggleColors()
-      if (questionFromParent.question !== question && questionFromParent.question !== null) {
-        setQuestion(questionFromParent.question)
-        console.log('hei')
-      } else if (questionFromParent.answer.join(' ') !== answer && questionFromParent.answer !== null) {
-        setAnswer(questionFromParent.answer.join(' '))
-      }
     }
-  }, [questions, questionFromParent, questionIsToggled, handleRemoveQuestion])
+  }, [questionIsToggled])
+
+  useEffect(() => {
+    if (questionFromParent.question !== question) {
+      setQuestion(questionFromParent.question)
+    }
+    if (questionFromParent.answer.join(' ') !== answer) {
+      setAnswer(questionFromParent.answer.join(' '))
+    }
+  }, [questions])
+
+  useEffect(() => {
+    if (questionFromParent.question !== question) {
+      handleQuestionChange(question, index)
+    }
+    if (questionFromParent.answer.join(' ') !== answer) {
+      handleAnswerChange(answer, index)
+    }
+  }, [question, answer])
 
   return (
     <View style={styles.container}>
@@ -92,10 +103,7 @@ const QuestionsCreateQuiz: React.FC<QuestionsCreateQuizProps> = ({
               {questionIsToggled
                 ? (
                 <View>
-                  <TextInput label="Question" value={question} onChangeText={val => {
-                    setQuestion(val)
-                    handleQuestionChange(val, index)
-                  }} />
+                  <TextInput label="Question" value={question} onChangeText={val => setQuestion(val)} />
                   <TextInput label="Answer" value={answer} editable={true} onChangeText={val => setAnswer(val)} />
                 </View>
                   )
@@ -134,7 +142,9 @@ const QuestionsCreateQuiz: React.FC<QuestionsCreateQuizProps> = ({
                     {question.split(' ').map((questionPart, i) => {
                       return (
                         <View key={i} style={questionPart === answer ? styles.formTextCorrectAnswer : styles.formText}>
-                          <Text style={styles.questionSubmitted} onPress={() => setAnswer(question.split(' ')[i])}>
+                          <Text style={styles.questionSubmitted} onPress={() => {
+                            setAnswer(question.split(' ')[i])
+                          }}>
                             {questionPart}
                           </Text>
                         </View>
@@ -185,7 +195,9 @@ const styles = StyleSheet.create({
   container2: {
     flex: 1,
     flexDirection: 'row',
-    paddingBottom: 2
+    paddingBottom: 2,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   questionContainer: {
     marginBottom: 5

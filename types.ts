@@ -100,8 +100,18 @@ export interface AddInformationToQuizScreenProps {
   description: string
   difficulty: number
   theme: string
+  isMultipleChoice: boolean
 }
 export interface QuestionsCreateQuizProps {
+  index: number
+  handleNewQuestion: () => void
+  handleRemoveQuestion: (i: number) => void
+  handleQuestionChange: (questionInput: string, i: number) => void
+  handleAnswerChange: (questionInput: string, i: number) => void
+  questions: QuestionForm[]
+  questionFromParent: QuestionForm
+}
+export interface AddMultipleChoiceQuestionsProps {
   index: number
   handleNewQuestion: () => void
   handleRemoveQuestion: (i: number) => void

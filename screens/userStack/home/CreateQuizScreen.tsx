@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
+// import { SelectList } from 'react-native-dropdown-select-list'
 import { TextInput } from 'react-native-paper'
 // import { SelectList } from 'react-native-dropdown-select-list'
 import { COLORS } from '../../../assets/colors'
@@ -11,6 +12,9 @@ const CreateQuizScreeen: React.FC = ({ navigation }: RouterProps) => {
   const [description, setDescription] = useState<string>('')
   // const [difficulty, setDifficulty] = useState<number>()
   const [theme, setTheme] = useState<string>('')
+  // const [isMultipleChoice, setIsMultipleChoice] = useState<boolean>(false)
+
+  // const isMultipleChoiceList = [{ key: 'Multiple choice', value: true }, { key: 'Question form', value: false }]
 
   // const difficultyList = [
   //   {
@@ -60,6 +64,12 @@ const CreateQuizScreeen: React.FC = ({ navigation }: RouterProps) => {
           activeOutlineColor={COLORS.cyan}
         />
         {/* <SelectList
+          setSelected={setIsMultipleChoice}
+          data={isMultipleChoiceList}
+          save="key"
+          defaultOption={(isMultipleChoiceList[0].key, isMultipleChoiceList[0].value)}
+        /> */}
+        {/* <SelectList
           setSelected={setDifficulty}
           data={difficultyList}
           save="key"
@@ -92,8 +102,6 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
     paddingBottom: 50
-    // borderWidth: 2,
-    // borderColor: 'magenta'
   }
 })
 

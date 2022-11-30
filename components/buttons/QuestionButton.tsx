@@ -13,16 +13,14 @@ const QuestionButton: React.FC<QuestionButtonProps> = ({ onPress, size, text, co
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      flexDirection: 'row',
-      bottom: 2,
-      left: 3
+      flexDirection: 'row'
+
     },
     questionButton: {
       width: size * 2,
       height: size / 2,
       justifyContent: 'center',
       alignItems: 'center',
-      padding: 10,
       marginHorizontal: 8,
       borderRadius: size / 10,
       backgroundColor: color !== null ? color : COLORS.cyan
