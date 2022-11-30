@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux'
 import { COLORS } from '../../../assets/colors'
 import UploadButton from '../../../components/buttons/UploadButtonButton'
 import { db } from '../../../firebaseConfig'
-import { Quiz, RouterProps } from '../../../types'
+import { FirestoreQuizForm, FirestoreQuizMultiple, Quiz, RouterProps } from '../../../types'
 import quizFormFromFirestore from '../../../utils/functions/format-quiz/quizFormFromFirestore'
 import quizMultipleFromFirestore from '../../../utils/functions/format-quiz/quizMultipleFromFirestore'
 import { setCurrentQuiz } from '../../../utils/redux/storeSlice'
@@ -23,11 +23,11 @@ const StoreScreen: React.FC = ({ navigation }: RouterProps) => {
     const fetchedQuizzes: Quiz[] = []
     const formSnapshot = await getDocs(collection(db, 'store/userCreated/formQuiz'))
     formSnapshot.forEach(docx => {
-      fetchedQuizzes.push(quizFormFromFirestore(docx.data(), docx.id))
+      fetchedQuizzes.push(quizFormFromFirestore(docx.data() as FirestoreQuizForm, docx.id))
     })
     const apiSnapshot = await getDocs(collection(db, 'store/api/multipleChoiceQuiz'))
     apiSnapshot.forEach(docx => {
-      fetchedQuizzes.push(quizMultipleFromFirestore(docx.data(), docx.id))
+      fetchedQuizzes.push(quizMultipleFromFirestore(docx.data() as FirestoreQuizMultiple, docx.id))
     })
     setQuizList(fetchedQuizzes)
     setLoading(false)
