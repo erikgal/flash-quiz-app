@@ -11,31 +11,45 @@ import ProfileScreen from '../screens/userStack/profile/ProfileScreen'
 import StoreScreen from '../screens/userStack/store/StoreScreen'
 import StorePreviewScreen from '../screens/userStack/store/StorePreviewScreen'
 import UploadScreen from '../screens/userStack/store/UploadScreen'
-import CreateQuizScreen from '../screens/userStack/home/CreateQuizScreen'
-import AddQuestionToQuizScreen from '../screens/userStack/home/AddInformationToQuizScreen'
+import CreateQuizScreen from '../screens/userStack/home/create-quiz/CreateQuizScreen'
+import AddInformationToQuizScreen from '../screens/userStack/home/create-quiz/AddInformationToQuizScreen'
 import QuizMultipleScreen from '../screens/userStack/home/quiz-multiple-choice/QuizMultipleScreen'
 import SummaryMultipleScreen from '../screens/userStack/home/quiz-multiple-choice/SummaryMultipleScreen'
+import AddInfoToQuizMultipleChoiceScreen from '../screens/userStack/home/create-quiz/AddInfoToQuizMultipleChoiceScreen'
 
 const HomeStack = createNativeStackNavigator()
 const HomeStackScreen: React.FC = () => {
   return (
     <HomeStack.Navigator>
       <HomeStack.Screen name="HomeScreen" options={{ title: 'Home' }} component={HomeScreen} />
-      <HomeStack.Screen name="HomePreviewScreen" options={{ title: 'Preview' }} component={HomePreviewScreen}/>
-      <HomeStack.Screen name="QuizFormScreen" options={{ title: 'Quiz' }} component={QuizFormScreen}/>
-      <HomeStack.Screen name="SummaryFormScreen" options={{ title: 'Summary', headerBackVisible: false }} component={SummaryFormScreen}/>
+      <HomeStack.Screen name="HomePreviewScreen" options={{ title: 'Preview' }} component={HomePreviewScreen} />
+      <HomeStack.Screen name="QuizFormScreen" options={{ title: 'Quiz' }} component={QuizFormScreen} />
+      <HomeStack.Screen
+        name="SummaryFormScreen"
+        options={{ title: 'Summary', headerBackVisible: false }}
+        component={SummaryFormScreen}
+      />
       <HomeStack.Screen
         name="CreateQuizScreen"
         options={{ title: 'Create Quiz', headerBackVisible: true }}
         component={CreateQuizScreen}
       />
       <HomeStack.Screen
-        name="AddQuestionToQuizScreen"
+        name="AddInformationToQuizScreen"
         options={{ title: 'Add Questions', headerBackVisible: true }}
-        component={AddQuestionToQuizScreen}
+        component={AddInformationToQuizScreen}
       />
-      <HomeStack.Screen name="QuizMultipleScreen" options={{ title: 'Quiz' }} component={QuizMultipleScreen}/>
-      <HomeStack.Screen name="SummaryMultipleScreen" options={{ title: 'Summary', headerBackVisible: false }} component={SummaryMultipleScreen}/>
+      <HomeStack.Screen
+        name="AddInfoToQuizMultipleChoiceScreen"
+        options={{ title: 'Add Multiple Choice Questions', headerBackVisible: true }}
+        component={AddInfoToQuizMultipleChoiceScreen}
+      />
+      <HomeStack.Screen name="QuizMultipleScreen" options={{ title: 'Quiz' }} component={QuizMultipleScreen} />
+      <HomeStack.Screen
+        name="SummaryMultipleScreen"
+        options={{ title: 'Summary', headerBackVisible: false }}
+        component={SummaryMultipleScreen}
+      />
     </HomeStack.Navigator>
   )
 }

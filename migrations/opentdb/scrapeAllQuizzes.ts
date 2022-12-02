@@ -38,14 +38,14 @@ export default async function scrapeAllQuizzes (): Promise<void> {
 
     const questionsSortByDiff: SortedResults = { easy: [], medium: [], hard: [] }
     let restQuestions = numOfQuestions.data.category_question_count.total_question_count as number
-    console.log(category.name, restQuestions)
+    // console.log(category.name, restQuestions)
 
     while (true) {
       const amount = restQuestions >= 50 ? 50 : restQuestions
 
       const quizResponse = await axios.get(`https://opentdb.com/api.php?amount=${amount}&category=${category.id}&token=${token}`)
       if (quizResponse.data.response_code !== 0) {
-        console.log('response code', quizResponse.data.response_code)
+        // console.log('response code', quizResponse.data.response_code)
         break
       }
 
@@ -85,9 +85,9 @@ export default async function scrapeAllQuizzes (): Promise<void> {
       }
       return formattedQuestion
     })
-    console.log(formattedQuestions[0].difficulty, formattedQuestions[0].questions.length)
-    console.log(formattedQuestions[1].difficulty, formattedQuestions[1].questions.length)
-    console.log(formattedQuestions[2].difficulty, formattedQuestions[2].questions.length)
+    // console.log(formattedQuestions[0].difficulty, formattedQuestions[0].questions.length)
+    // console.log(formattedQuestions[1].difficulty, formattedQuestions[1].questions.length)
+    // console.log(formattedQuestions[2].difficulty, formattedQuestions[2].questions.length)
 
     formattedQuestions.map(async quiz => {
       const firestoreQuiz = quizMultipleToFirestore(quiz, path)

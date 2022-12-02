@@ -1,82 +1,62 @@
-import React, { useEffect, useState } from 'react'
-import { StyleSheet, View, Text, NativeSyntheticEvent, TextInputChangeEventData } from 'react-native'
+import React from 'react'
+import { StyleSheet, View, Text } from 'react-native'
 import { TextInput } from 'react-native-paper'
-import { COLORS } from '../assets/colors'
-import { AddMultipleChoiceQuestionsProps } from '../types'
-import QuestionButton from './buttons/QuestionButton'
-import RoundButton from './buttons/RoundButton'
+import { COLORS } from '../../assets/colors'
+import { AddMultipleChoiceProps } from '../../types'
+import QuestionButton from '../buttons/QuestionButton'
+import RoundButton from '../buttons/RoundButton'
 
-const AddMultipleChoiceQuestions: React.FC<AddMultipleChoiceQuestionsProps> = ({
+const AddMultipleChoiceQuestions: React.FC<AddMultipleChoiceProps> = ({
   index,
   handleNewQuestion,
   handleRemoveQuestion,
   handleQuestionChange,
   handleAnswerChange,
-  questions,
-  questionFromParent
-}: AddMultipleChoiceQuestionsProps) => {
-  const [question, setQuestion] = useState<string>('')
-  const [correctAnswer, setCorrectAnswer] = useState<string>('')
-  const [possibleAnswers, setPossibleAnswers] = useState<string[]>([])
-  const [isSubmitted, setIsSubmitted] = useState<boolean>(false)
-
+  handleIncorrectAnswersChange,
+  handleSubmitChange,
+  handleNewIncorrectAnswer,
+  questions
+}: AddMultipleChoiceProps) => {
   const alphabet: string[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
 
   const submitQuestion = (): void => {
-    if (question.length !== 0 && !isSubmitted && !possibleAnswers.includes('') && possibleAnswers.length >= 2) {
-      if (!question.endsWith('?')) {
-        setQuestion(question + '?')
+    if (
+      questions[index].questionMultiple.question.length !== 0 &&
+      !questions[index].isSubmitted &&
+      !questions[index].questionMultiple.incorrect_answers.includes('') &&
+      questions[index].questionMultiple.incorrect_answers.length >= 2
+    ) {
+      if (!questions[index].questionMultiple.question.endsWith('?')) {
+        handleQuestionChange(questions[index].questionMultiple.question + '?', index)
       }
-      setIsSubmitted(true)
-    } else if (isSubmitted) {
-      setIsSubmitted(false)
+      handleSubmitChange(true, index)
+    } else if (questions[index].isSubmitted) {
+      handleSubmitChange(false, index)
     }
   }
-
-  const handleNewPossibleAnswer = (): void => {
-    setPossibleAnswers([...possibleAnswers, ''])
-  }
-
-  const handleChangePossibleAnswers = (e: NativeSyntheticEvent<TextInputChangeEventData>, index: number): void => {
-    const list = [...possibleAnswers]
-    list[index] = e.nativeEvent.text
-    setPossibleAnswers(list)
-  }
-
-  useEffect(() => {
-    if (questionFromParent.question !== question) {
-      setQuestion(questionFromParent.question)
-    }
-    if (questionFromParent.answer.join(' ') !== correctAnswer) {
-      setCorrectAnswer(questionFromParent.answer.join(' '))
-    }
-  }, [questions])
-
-  useEffect(() => {
-    if (questionFromParent.question !== question) {
-      handleQuestionChange(question, index)
-    }
-  }, [question])
 
   return (
     <View style={styles.container}>
       <View style={styles.borderBox}>
         <View style={styles.questionInputs}>
-          {!isSubmitted
+          {!questions[index].isSubmitted
             ? (
             <View style={styles.questionInputs}>
               <View>
-                <TextInput label="Question" value={question} onChangeText={val => setQuestion(val)} />
-                {possibleAnswers.map((answer, i) => {
+                <TextInput
+                  label="Question"
+                  value={questions[index].questionMultiple.question}
+                  onChangeText={val => handleQuestionChange(val, index)}
+                />
+                {questions[index].questionMultiple.incorrect_answers.map((answer, i) => {
                   return (
                     <View key={i}>
                       <TextInput
                         key={i}
                         value={answer}
                         label="Possible answer"
-                        onChange={e => {
-                          e.preventDefault()
-                          handleChangePossibleAnswers(e, i)
+                        onChangeText={val => {
+                          handleIncorrectAnswersChange(val, index, i)
                         }}
                       />
                     </View>
@@ -90,19 +70,26 @@ const AddMultipleChoiceQuestions: React.FC<AddMultipleChoiceQuestionsProps> = ({
               <View style={styles.questionTextContainer}>
                 <Text style={styles.questionSubmitted}>Question: </Text>
               </View>
-              <Text style={styles.text}>{question}</Text>
+              <Text style={styles.text}>{questions[index].questionMultiple.question}</Text>
               <View style={styles.questionTextContainer}>
                 <View style={styles.questionTextContainer}>
                   <Text style={styles.answerSubmitted}>Answer: </Text>
                 </View>
                 <View style={styles.answerFormContainer}>
-                  {possibleAnswers.map((answer, i) => {
+                  {questions[index].questionMultiple.incorrect_answers.map((answer, i) => {
                     return (
-                      <View key={i} style={answer === correctAnswer ? styles.formTextCorrectAnswer : styles.formText}>
+                      <View
+                        key={i}
+                        style={
+                          answer === questions[index].questionMultiple.answer
+                            ? styles.formTextCorrectAnswer
+                            : styles.formText
+                        }
+                      >
                         <Text
                           style={styles.answerSubmittedText}
                           onPress={() => {
-                            setCorrectAnswer(answer)
+                            handleAnswerChange(answer, index)
                           }}
                         >
                           {alphabet[i]}: {answer}
@@ -116,21 +103,21 @@ const AddMultipleChoiceQuestions: React.FC<AddMultipleChoiceQuestionsProps> = ({
               )}
         </View>
         <View style={styles.submitButtonContainer}>
-          {possibleAnswers.length < 6 && !isSubmitted && (
+          {questions[index].questionMultiple.incorrect_answers.length < 6 && !questions[index].isSubmitted && (
             <QuestionButton
               text={'Add answer alternative'}
-              onPress={handleNewPossibleAnswer}
+              onPress={() => handleNewIncorrectAnswer(index)}
               size={75}
               color={COLORS.cyan}
             />
           )}
           <QuestionButton
-            text={isSubmitted ? 'Edit' : 'Submit'}
+            text={questions[index].isSubmitted ? 'Edit' : 'Submit'}
             onPress={submitQuestion}
             size={75}
             color={COLORS.cyan}
           />
-          {questions.length > 1 && isSubmitted && (
+          {questions.length > 1 && questions[index].isSubmitted && (
             <QuestionButton
               text={'Remove question'}
               onPress={() => {
@@ -142,7 +129,7 @@ const AddMultipleChoiceQuestions: React.FC<AddMultipleChoiceQuestionsProps> = ({
           )}
         </View>
       </View>
-      <View key={question} style={styles.addQuestionButton}>
+      <View key={questions[index].questionMultiple.question} style={styles.addQuestionButton}>
         {questions.length - 1 === index && (
           <RoundButton disabled={false} loading={false} text={'Add question'} onPress={handleNewQuestion} />
         )}

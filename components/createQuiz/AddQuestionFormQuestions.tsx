@@ -1,136 +1,138 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { StyleSheet, View, Text } from 'react-native'
 import { TextInput } from 'react-native-paper'
-import { COLORS } from '../assets/colors'
-import { RouterProps, QuestionsCreateQuizProps } from '../types'
-import QuestionButton from './buttons/QuestionButton'
-import RoundButton from './buttons/RoundButton'
+import { COLORS } from '../../assets/colors'
+import { AddQuestionProps, RouterProps } from '../../types'
+import QuestionButton from '../buttons/QuestionButton'
+import RoundButton from '../buttons/RoundButton'
 
-const QuestionsCreateQuiz: React.FC<QuestionsCreateQuizProps> = ({
+const AddQuestionFormQuestions: React.FC<AddQuestionProps> = ({
   index,
   handleNewQuestion,
   handleRemoveQuestion,
   handleQuestionChange,
   handleAnswerChange,
+  handleSubmitChange,
+  handleColorQuestionChange,
+  handleColorFormChange,
+  handleQuestionIsToggledChange,
   questions,
   questionFromParent
-}: QuestionsCreateQuizProps & RouterProps) => {
-  const [questionIsToggled, setQuestionIsToggled] = useState<boolean>(true)
-  const [colorQuestion, setColorQuestion] = useState<string>(COLORS.blue)
-  const [colorForm, setColorForm] = useState<string>(COLORS.cyan)
-  const [isSubmitted, setIsSubmitted] = useState<boolean>(false)
-  const [question, setQuestion] = useState<string>('')
-  const [answer, setAnswer] = useState<string>('')
-
-  const submitQuestion = (): void => {
-    if (question.length !== 0 && !isSubmitted) {
-      if (questionIsToggled && answer.length >= 1) {
-        if (!question.endsWith('?')) {
-          setQuestion(question + '?')
-          setIsSubmitted(true)
-        }
+}: AddQuestionProps & RouterProps) => {
+  const handleSubmit = (): void => {
+    if (questions[index].isSubmitted) {
+      if (!questions[index].questionIsToggled) {
+        handleAnswerChange('', index)
       }
-      setIsSubmitted(true)
-    } else if (isSubmitted) {
-      setIsSubmitted(false)
-      if (!questionIsToggled) {
-        setAnswer('')
-      }
+      handleSubmitChange(false, index)
+    } else if (questions[index].questions.question !== '' && questions[index].questions.answer.join(' ') !== '') {
+      handleSubmitChange(true, index)
+    } else if (questions[index].questions.question !== '' && !questions[index].questionIsToggled) {
+      handleSubmitChange(true, index)
     }
+    // else if (!questionIsToggled && questions[index].answer.join(' ') !== '') {
+    //   setIsSubmitted(true)
+    // }
   }
 
   const changeToggleColors = (): void => {
-    if (!isSubmitted) {
-      if (questionIsToggled) {
-        setColorQuestion(COLORS.blue)
-        setColorForm(COLORS.cyan)
+    if (!questions[index].isSubmitted) {
+      if (questions[index].questionIsToggled) {
+        handleColorQuestionChange(COLORS.blue, index)
+        handleColorFormChange(COLORS.cyan, index)
       } else {
-        setColorQuestion(COLORS.cyan)
-        setColorForm(COLORS.blue)
+        handleColorQuestionChange(COLORS.cyan, index)
+        handleColorFormChange(COLORS.blue, index)
+        handleAnswerChange('', index)
       }
-      setAnswer('')
     }
   }
 
   const handleChangeQuestionType = (val: boolean): void => {
-    if (!isSubmitted) {
-      setQuestionIsToggled(val)
+    if (!questions[index].isSubmitted) {
+      handleQuestionIsToggledChange(val, index)
     }
   }
 
   useEffect(() => {
-    if (!isSubmitted) {
+    if (!questions[index].isSubmitted) {
       changeToggleColors()
     }
-  }, [questionIsToggled])
-
-  useEffect(() => {
-    if (questionFromParent.question !== question) {
-      setQuestion(questionFromParent.question)
-    }
-    if (questionFromParent.answer.join(' ') !== answer) {
-      setAnswer(questionFromParent.answer.join(' '))
-    }
-  }, [questions])
-
-  useEffect(() => {
-    if (questionFromParent.question !== question) {
-      handleQuestionChange(question, index)
-    }
-    if (questionFromParent.answer.join(' ') !== answer) {
-      handleAnswerChange(answer, index)
-    }
-  }, [question, answer])
+  }, [questions[index].questionIsToggled])
 
   return (
     <View style={styles.container}>
       <View style={styles.borderBox}>
-        {!isSubmitted && (
+        {!questions[index].isSubmitted && (
           <View style={styles.container2}>
             <QuestionButton
               text="Question"
-              onPress={() => handleChangeQuestionType(true)}
+              onPress={() => {
+                handleChangeQuestionType(true)
+              }}
               size={75}
-              color={colorQuestion}
+              color={questions[index].colorQuestion}
             />
-            <QuestionButton text="Form" onPress={() => handleChangeQuestionType(false)} size={75} color={colorForm} />
+            <QuestionButton
+              text="Form"
+              onPress={() => {
+                handleChangeQuestionType(false)
+              }}
+              size={75}
+              color={questions[index].colorForm}
+            />
           </View>
         )}
         <View style={styles.questionInputs}>
-          {!isSubmitted
+          {!questions[index].isSubmitted
             ? (
             <View style={styles.questionInputs}>
-              {questionIsToggled
+              {questions[index].questionIsToggled
                 ? (
                 <View>
-                  <TextInput label="Question" value={question} onChangeText={val => setQuestion(val)} />
-                  <TextInput label="Answer" value={answer} editable={true} onChangeText={val => setAnswer(val)} />
+                  <TextInput
+                    label="Question"
+                    value={questions[index].questions.question}
+                    onChangeText={val => {
+                      handleQuestionChange(val, index)
+                    }}
+                  />
+                  <TextInput
+                    label="Answer"
+                    value={questions[index].questions.answer.join('')}
+                    editable={true}
+                    onChangeText={val => {
+                      handleAnswerChange(val, index)
+                    }}
+                  />
                 </View>
                   )
                 : (
                 <TextInput
                   editable={true}
+                  value={questions[index].questions.question}
                   style={styles.questionInputs}
                   label="Question"
-                  value={question}
-                  onChangeText={val => setQuestion(val)}
+                  onChangeText={val => {
+                    handleQuestionChange(val, index)
+                  }}
                 />
                   )}
             </View>
               )
             : (
             <>
-              {questionIsToggled
+              {questions[index].questionIsToggled
                 ? (
                 <>
                   <View style={styles.questionTextContainer}>
                     <Text style={styles.questionSubmitted}>Question: </Text>
                   </View>
-                  <Text style={styles.text}>{question}</Text>
+                  <Text style={styles.text}>{questions[index].questions.question}</Text>
                   <View style={styles.questionTextContainer}>
                     <Text style={styles.answerSubmitted}>Answer: </Text>
                   </View>
-                  <Text style={styles.text}>{answer}</Text>
+                  <Text style={styles.text}>{questions[index].questions.answer}</Text>
                 </>
                   )
                 : (
@@ -139,22 +141,29 @@ const QuestionsCreateQuiz: React.FC<QuestionsCreateQuizProps> = ({
                     <Text style={styles.questionSubmitted}>Question:</Text>
                   </View>
                   <View style={styles.answerFormContainer}>
-                    {question.split(' ').map((questionPart, i) => {
+                    {questions[index].questions.question.split(' ').map((questionPart, i) => {
                       return (
-                        <View key={i} style={questionPart === answer ? styles.formTextCorrectAnswer : styles.formText}>
-                          <Text style={styles.questionSubmitted} onPress={() => {
-                            setAnswer(question.split(' ')[i])
-                          }}>
-                            {questionPart}
-                          </Text>
-                        </View>
+                        <Text
+                          key={i}
+                          style={
+                            questionPart === questions[index].questions.answer.join(' ')
+                              ? styles.formTextCorrectAnswer
+                              : styles.formText
+                          }
+                          onPress={() => {
+                            handleSubmitChange(true, index)
+                            handleAnswerChange(questions[index].questions.question.split(' ')[i], index)
+                          }}
+                        >
+                          {questionPart}
+                        </Text>
                       )
                     })}
                   </View>
                   <View style={styles.questionTextContainer}>
                     <Text style={styles.answerSubmitted}>Answer:</Text>
                   </View>
-                  <Text style={styles.answerSubmittedForm}>{answer}</Text>
+                  <Text style={styles.answerSubmittedForm}>{questions[index].questions.answer}</Text>
                 </>
                   )}
             </>
@@ -162,12 +171,14 @@ const QuestionsCreateQuiz: React.FC<QuestionsCreateQuizProps> = ({
         </View>
         <View style={styles.submitButtonContainer}>
           <QuestionButton
-            text={isSubmitted ? 'Edit' : 'Submit'}
-            onPress={submitQuestion}
+            text={questions[index].isSubmitted ? 'Edit' : 'Submit'}
+            onPress={() => {
+              handleSubmit()
+            }}
             size={75}
             color={COLORS.cyan}
           />
-          {questions.length > 1 && isSubmitted && (
+          {questions.length > 1 && questions[index].isSubmitted && (
             <QuestionButton
               text={'Remove question'}
               onPress={() => {
@@ -179,7 +190,7 @@ const QuestionsCreateQuiz: React.FC<QuestionsCreateQuizProps> = ({
           )}
         </View>
       </View>
-      <View style={styles.buttonContainerQuestion} key={question}>
+      <View style={styles.buttonContainerQuestion}>
         {questions.length - 1 === index && (
           <RoundButton disabled={false} loading={false} text={'Add question'} onPress={handleNewQuestion} />
         )}
@@ -258,7 +269,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.grey,
     borderRadius: 20,
     padding: 10,
-    width: '98%',
+    width: '100%',
     alignSelf: 'center'
   },
   answerSubmittedText: {
@@ -277,8 +288,9 @@ const styles = StyleSheet.create({
   },
   answerFormContainer: {
     flex: 1,
-    flexDirection: 'row'
+    flexDirection: 'row',
+    flexWrap: 'wrap'
   }
 })
 
-export default QuestionsCreateQuiz
+export default AddQuestionFormQuestions

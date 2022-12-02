@@ -1,8 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { ScrollView, StyleSheet, View, Text } from 'react-native'
-import { ActivityIndicator, Searchbar } from 'react-native-paper'
+import { ActivityIndicator, FAB, Portal, Provider, Searchbar } from 'react-native-paper'
 import { Quiz, RouterProps } from '../../../types'
-import PlusButton from '../../../components/buttons/PlusButton'
 import { useDispatch } from 'react-redux'
 import { loadQuizzes, setCurrentQuiz } from '../../../utils/redux/quizSlice'
 import 'react-native-get-random-values'
@@ -17,6 +16,7 @@ import QuizList from '../../../components/list/QuizList'
 import AreYouSureModal from '../../../components/modals/AreYouSureDeleteModal'
 import fetchQuizzesToUser from '../../../utils/services/fetchQuizzesToUser'
 import debounce from 'lodash.debounce'
+import { setIsMultiplechoice } from '../../../utils/redux/createQuizSlice'
 
 const HomeScreen: React.FC = ({ navigation }: RouterProps) => {
   const [loading, setLoading] = useState<boolean>(true)
@@ -25,6 +25,7 @@ const HomeScreen: React.FC = ({ navigation }: RouterProps) => {
   const [longPressQuiz, setLongPressQuiz] = useState<Quiz>()
   const [search, setSearch] = useState<string>('')
   const [quizList, setQuizList] = useState<Quiz[]>([])
+  const [addButtonOpen, setAddButtonOpen] = useState<boolean>(false)
   const [filteredQuizList, setFilteredQuizList] = useState<Quiz[]>([])
   const { user } = useAuthentication()
   const dispatch = useDispatch()
@@ -75,15 +76,13 @@ const HomeScreen: React.FC = ({ navigation }: RouterProps) => {
     setVisibleDelete(true)
   }
 
-  const handleAdd = (): void => {
-    navigation.navigate('CreateQuizScreen')
-  }
-
   const filterContent = (text): void => {
     if (text !== '') {
-      setFilteredQuizList(quizList.filter(quiz => {
-        return quiz.title.includes(text) || quiz.description.includes(text) || quiz.theme.includes(text)
-      }))
+      setFilteredQuizList(
+        quizList.filter(quiz => {
+          return quiz.title.includes(text) || quiz.description.includes(text) || quiz.theme.includes(text)
+        })
+      )
     } else {
       setFilteredQuizList([])
     }
@@ -131,9 +130,7 @@ const HomeScreen: React.FC = ({ navigation }: RouterProps) => {
           <Text style={styles.noContentText}>{"You don't have any quizzes, create or download some!"}</Text>
         </View>
             )}
-      <View style={styles.buttonContainer}>
-        <PlusButton onPress={handleAdd} size={70} />
-      </View>
+      <View style={styles.plus}></View>
       <CancelEditDeleteModal
         onDismiss={() => setVisible(false)}
         visible={visible}
@@ -148,6 +145,39 @@ const HomeScreen: React.FC = ({ navigation }: RouterProps) => {
         onDelete={wrapAsyncFunction(handleDelete)}
         action={'delete this quiz'}
       />
+      <Provider>
+        <Portal>
+          <FAB.Group
+            open={addButtonOpen}
+            visible
+            icon={addButtonOpen ? 'window-close' : 'plus'}
+            actions={[
+              {
+                icon: 'plus',
+                label: 'Create normal quiz',
+                onPress: () => {
+                  dispatch(setIsMultiplechoice(0))
+                  navigation.navigate('CreateQuizScreen')
+                }
+              },
+              {
+                icon: 'list-status',
+                label: 'Create multiple choice quiz',
+                onPress: () => {
+                  dispatch(setIsMultiplechoice(1))
+                  navigation.navigate('CreateQuizScreen')
+                }
+              }
+            ]}
+            onStateChange={() => setAddButtonOpen(!addButtonOpen)}
+            onPress={() => {
+              if (addButtonOpen) {
+                // do something if the speed dial is open
+              }
+            }}
+          />
+        </Portal>
+      </Provider>
     </View>
   )
 }
@@ -199,6 +229,12 @@ const styles = StyleSheet.create({
   },
   autocompleteContainer: {
     minWidth: '99.5%'
+  },
+  fabAction: {
+    backgroundColor: 'pink',
+    color: 'blue',
+    width: 40,
+    paddingRight: 20
   }
 })
 

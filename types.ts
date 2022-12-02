@@ -107,32 +107,53 @@ export interface UserAnswersForm {
   corrections: boolean[][]
   userAnswers: InputMap[]
 }
-export interface AddInformationToQuizScreenProps {
-  name: string
-  description: string
-  difficulty: number
-  theme: string
-  isMultipleChoice: boolean
-}
-export interface QuestionsCreateQuizProps {
-  index: number
-  handleNewQuestion: () => void
-  handleRemoveQuestion: (i: number) => void
-  handleQuestionChange: (questionInput: string, i: number) => void
-  handleAnswerChange: (questionInput: string, i: number) => void
-  questions: QuestionForm[]
-  questionFromParent: QuestionForm
-}
-export interface AddMultipleChoiceQuestionsProps {
-  index: number
-  handleNewQuestion: () => void
-  handleRemoveQuestion: (i: number) => void
-  handleQuestionChange: (questionInput: string, i: number) => void
-  handleAnswerChange: (questionInput: string, i: number) => void
-  questions: QuestionForm[]
-  questionFromParent: QuestionForm
+export interface QuizInformation {
+  name: string | undefined
+  description: string | undefined
+  theme: string | undefined
+  difficulty: number | undefined
+  isMultipleChoice: number | undefined
 }
 export interface UserAnswersMultiple {
   corrections: boolean[]
   userAnswers: string[]
+}
+
+export interface AddQuestionProps {
+  index: number
+  handleNewQuestion: () => void
+  handleRemoveQuestion: (i: number) => void
+  handleQuestionChange: (questionInput: string, i: number) => void
+  handleAnswerChange: (questionInput: string, i: number) => void
+  handleSubmitChange: (input: boolean, i: number) => void
+  handleQuestionIsToggledChange: (input: boolean, i: number) => void
+  handleColorQuestionChange: (input: string, i: number) => void
+  handleColorFormChange: (input: string, i: number) => void
+  questions: QuestionFormQuestion[]
+  questionFromParent: QuestionForm
+}
+
+export interface QuestionFormQuestion {
+  questions: QuestionForm
+  isSubmitted: boolean
+  questionIsToggled: boolean
+  colorQuestion: string
+  colorForm: string
+}
+
+export interface MultipleChoiceQuestion {
+  questionMultiple: QuestionMultiple
+  isSubmitted: boolean
+}
+
+export interface AddMultipleChoiceProps {
+  index: number
+  handleNewQuestion: () => void
+  handleRemoveQuestion: (i: number) => void
+  handleQuestionChange: (questionInput: string, i: number) => void
+  handleAnswerChange: (questionInput: string, i: number) => void
+  handleSubmitChange: (input: boolean, i: number) => void
+  handleIncorrectAnswersChange: (input: string, i: number, j: number) => void
+  handleNewIncorrectAnswer: (input: number) => void
+  questions: MultipleChoiceQuestion[]
 }
