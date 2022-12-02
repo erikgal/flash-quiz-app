@@ -34,6 +34,7 @@ export interface Quiz {
   'type': QuizType
   'downloads': number
   'path'?: string
+  'raitings': Raitings
   'questions': QuestionForm[] | QuestionMultiple[]
 }
 
