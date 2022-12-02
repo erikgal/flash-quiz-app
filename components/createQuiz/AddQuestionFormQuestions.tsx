@@ -99,7 +99,7 @@ const AddQuestionFormQuestions: React.FC<AddQuestionProps> = ({
                   />
                   <TextInput
                     label="Answer"
-                    value={questions[index].questions.answer.join('')}
+                    value={questions[index].questions.answer[0].join(' ')}
                     editable={true}
                     onChangeText={val => {
                       handleAnswerChange(val, index)
@@ -132,7 +132,7 @@ const AddQuestionFormQuestions: React.FC<AddQuestionProps> = ({
                   <View style={styles.questionTextContainer}>
                     <Text style={styles.answerSubmitted}>Answer: </Text>
                   </View>
-                  <Text style={styles.text}>{questions[index].questions.answer}</Text>
+                  <Text style={styles.text}>{questions[index].questions.answer[0].join(' ')}</Text>
                 </>
                   )
                 : (

@@ -7,15 +7,15 @@ import { RouterProps } from '../../../../types'
 import RNPickerSelect, { Item } from 'react-native-picker-select'
 import { Chevron } from 'react-native-shapes'
 import { useDispatch, useSelector } from 'react-redux'
-// import { setQuizInfo } from '../../../utils/redux/createQuizSlice'
 import { RootState } from '../../../../store'
+import { setQuizInfo } from '../../../../utils/redux/createQuizSlice'
 
 const CreateQuizScreeen: React.FC = ({ navigation }: RouterProps) => {
   const [name, setName] = useState<string>('')
   const [description, setDescription] = useState<string>('')
   const [theme, setTheme] = useState<string>('')
   const [difficulty, setDifficulty] = useState<number>()
-  // const dispatch = useDispatch()
+  const dispatch = useDispatch()
   const isMultipleChoice: number | undefined = useSelector((state: RootState) => state.createQuizSlice.quizInfo.isMultipleChoice)
 
   const difficultyList: Item[] = [
@@ -25,18 +25,13 @@ const CreateQuizScreeen: React.FC = ({ navigation }: RouterProps) => {
   ]
 
   const handleNextPage = (): void => {
-    // if (name !== '' && description !== '' && theme !== '' && difficulty !== undefined && isMultipleChoice !== undefined) {
-    //   dispatch(setQuizInfo({ name, description, theme, difficulty, isMultipleChoice }))
-    //   if (isMultipleChoice === 1) {
-    //     navigation.navigate('AddInfoToQuizMultipleChoiceScreen')
-    //   } else {
-    //     navigation.navigate('AddInformationToQuizScreen')
-    //   }
-    // }
-    if (isMultipleChoice === 1) {
-      navigation.navigate('AddInfoToQuizMultipleChoiceScreen')
-    } else {
-      navigation.navigate('AddInformationToQuizScreen')
+    if (name !== '' && description !== '' && theme !== '' && difficulty !== undefined && isMultipleChoice !== undefined) {
+      dispatch(setQuizInfo({ name, description, theme, difficulty, isMultipleChoice }))
+      if (isMultipleChoice === 1) {
+        navigation.navigate('AddInfoToQuizMultipleChoiceScreen')
+      } else {
+        navigation.navigate('AddInformationToQuizScreen')
+      }
     }
   }
 

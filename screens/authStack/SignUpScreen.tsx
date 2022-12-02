@@ -5,7 +5,7 @@ import Icon from '@expo/vector-icons/Ionicons'
 import { RouterProps } from '../../types'
 import SignUp from '../../components/buttons/SignUpButton'
 import { COLORS } from '../../assets/colors'
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'
+import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
 import wrapAsyncFunction from '../../utils/functions/wrapAsyncFunction'
 
 const SignUpScreen: React.FC = ({ navigation }: RouterProps) => {
@@ -34,13 +34,19 @@ const SignUpScreen: React.FC = ({ navigation }: RouterProps) => {
   const signUp = async (): Promise<void> => {
     setLoading(true)
     try {
-      await createUserWithEmailAndPassword(auth, email, password)
+      await (await createUserWithEmailAndPassword(auth, email, password))
     } catch (error) {
       setError(error.message)
     }
     setLoading(false)
     setHasSignUp(true)
     Keyboard.dismiss()
+    updateProfile(auth.currentUser!, {
+      displayName: name
+    })
+      .catch(error => {
+        console.log(error)
+      })
   }
 
   return (

@@ -1,25 +1,27 @@
 import React, { useState } from 'react'
 import { StyleSheet, View, Text, ScrollView } from 'react-native'
-// import AddQuestionFormQuestions from '../../../components/createQuiz/AddQuestionFormQuestions'
 import RoundButton from '../../../../components/buttons/RoundButton'
-import { MultipleChoiceQuestion, RouterProps } from '../../../../types'
+import { MultipleChoiceQuestion, QuizInformation, QuizMultiple, QuizType, RouterProps } from '../../../../types'
 import AddMultipleChoiceQuestions from '../../../../components/createQuiz/AddMultipleChoiceQuestions'
-// import { useSelector } from 'react-redux'
-// import { RootState } from '../../../store'
-// import quizFormToFirestore from '../../../utils/functions/format-quiz/quizFormToFirestore'
-// import { db } from '../../../firebaseConfig'
-// import { useAuthentication } from '../../../utils/hooks/useAuthentication'
-// import { doc, setDoc } from 'firebase/firestore'
+import wrapAsyncFunction from '../../../../utils/functions/wrapAsyncFunction'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../../../store'
+import { Timestamp, doc, setDoc } from 'firebase/firestore'
+import { useAuthentication } from '../../../../utils/hooks/useAuthentication'
+import { db } from '../../../../firebaseConfig'
+import { v4 as uuidv4 } from 'uuid'
+import quizMultipleToFirestore from '../../../../utils/functions/format-quiz/quizMultipleToFirestore'
 
-const AddInformationToQuizScreen: React.FC = ({ navigation }: RouterProps) => {
-  // const quizInfo: QuizInformation | null = useSelector((state: RootState) => state.createQuizSlice.quizInfo)
+const AddInfoToQuizMultipleChoiceScreen: React.FC = ({ navigation }: RouterProps) => {
+  const quizInfo: QuizInformation | null = useSelector((state: RootState) => state.createQuizSlice.quizInfo)
   const [questions, setQuestions] = useState<MultipleChoiceQuestion[]>([
     {
       questionMultiple: { question: '', answer: '', incorrect_answers: [''] },
       isSubmitted: false
     }
   ])
-  // const { user } = useAuthentication()
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+  const { user } = useAuthentication()
 
   const handleBack = (): void => {
     navigation.navigate('CreateQuizScreen')
@@ -74,13 +76,33 @@ const AddInformationToQuizScreen: React.FC = ({ navigation }: RouterProps) => {
     setQuestions(list)
   }
 
-  // async function handleSubmitQuiz (): Promise<void> {
-  //   const firestoreQuiz = quizFormToFirestore(questions, 'store/userCreated/formQuiz')
-  //   await setDoc(doc(db, 'store/userCreated/formQuiz', selectedQuiz!.id), firestoreQuiz)
-  //   void fetchQuizzes()
-  //   setUploadVisible(false)
-  //   setVisible(true)
-  // }
+  async function handleSubmitQuiz (): Promise<void> {
+    if (questions.every(question => question.questionMultiple.answer !== '') && !isSubmitting) {
+      const quizMultiple = questions.map(question => {
+        return question.questionMultiple
+      })
+      setIsSubmitting(true)
+      const usedId: string = uuidv4()
+      const quiz: QuizMultiple = {
+        title: quizInfo!.name!,
+        id: usedId,
+        description: quizInfo!.description!,
+        date: Timestamp.fromDate(new Date()),
+        difficulty: quizInfo!.difficulty!,
+        theme: quizInfo!.theme!,
+        creatorId: user!.uid,
+        creatorName: user!.displayName!,
+        type: QuizType.MultipleChoiceQuiz,
+        downloads: 0,
+        path: `users/${user!.uid}/'multipleChoiceQuiz'`,
+        questions: quizMultiple
+      }
+      const fireBase = quizMultipleToFirestore(quiz, `users/${user!.uid}/${quiz.type}`)
+      await setDoc(doc(db, `users/${user!.uid}/${quiz.type}`, quiz.id), fireBase)
+      setIsSubmitting(false)
+      navigation.navigate('HomeScreen')
+    }
+  }
 
   return (
     <ScrollView style={styles.container}>
@@ -107,7 +129,12 @@ const AddInformationToQuizScreen: React.FC = ({ navigation }: RouterProps) => {
           <RoundButton disabled={false} loading={false} text={'Back'} onPress={handleBack} />
         </View>
         <View style={styles.buttonGroup}>
-          <RoundButton disabled={false} loading={false} text={'Submit Quiz'} onPress={() => console.log('first')} />
+          <RoundButton
+            disabled={false}
+            loading={false}
+            text={'Submit Quiz'}
+            onPress={wrapAsyncFunction(handleSubmitQuiz)}
+          />
         </View>
       </View>
     </ScrollView>
@@ -137,4 +164,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default AddInformationToQuizScreen
+export default AddInfoToQuizMultipleChoiceScreen
