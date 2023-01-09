@@ -108,9 +108,9 @@ const SignUpScreen: React.FC = ({ navigation }: RouterProps) => {
         </View>
         <View style={styles.buttonContainer}>
           <Text style={styles.error}>
-                {error}
-            </Text>
-          <SignUp onPress={wrapAsyncFunction(signUp)} text={'Sign up'} loading={loading}/>
+            {error}
+          </Text>
+          <SignUp onPress={wrapAsyncFunction(signUp)} text={'Sign up'} loading={loading} />
         </View>
       </View>
     </View>

@@ -41,66 +41,66 @@ const AddMultipleChoiceQuestions: React.FC<AddMultipleChoiceProps> = ({
         <View style={styles.questionInputs}>
           {!questions[index].isSubmitted
             ? (
-            <View style={styles.questionInputs}>
-              <View>
-                <TextInput
-                  label="Question"
-                  value={questions[index].questionMultiple.question}
-                  onChangeText={val => handleQuestionChange(val, index)}
-                />
-                {questions[index].questionMultiple.incorrect_answers.map((answer, i) => {
-                  return (
-                    <View key={i}>
-                      <TextInput
-                        key={i}
-                        value={answer}
-                        label="Possible answer"
-                        onChangeText={val => {
-                          handleIncorrectAnswersChange(val, index, i)
-                        }}
-                      />
-                    </View>
-                  )
-                })}
-              </View>
-            </View>
-              )
-            : (
-            <>
-              <View style={styles.questionTextContainer}>
-                <Text style={styles.questionSubmitted}>Question: </Text>
-              </View>
-              <Text style={styles.text}>{questions[index].questionMultiple.question}</Text>
-              <View style={styles.questionTextContainer}>
-                <View style={styles.questionTextContainer}>
-                  <Text style={styles.answerSubmitted}>Answer: </Text>
-                </View>
-                <View style={styles.answerFormContainer}>
+              <View style={styles.questionInputs}>
+                <View>
+                  <TextInput
+                    label="Question"
+                    value={questions[index].questionMultiple.question}
+                    onChangeText={val => handleQuestionChange(val, index)}
+                  />
                   {questions[index].questionMultiple.incorrect_answers.map((answer, i) => {
                     return (
-                      <View
-                        key={i}
-                        style={
-                          answer === questions[index].questionMultiple.answer
-                            ? styles.formTextCorrectAnswer
-                            : styles.formText
-                        }
-                      >
-                        <Text
-                          style={styles.answerSubmittedText}
-                          onPress={() => {
-                            handleAnswerChange(answer, index)
+                      <View key={i}>
+                        <TextInput
+                          key={i}
+                          value={answer}
+                          label="Possible answer"
+                          onChangeText={val => {
+                            handleIncorrectAnswersChange(val, index, i)
                           }}
-                        >
-                          {alphabet[i]}: {answer}
-                        </Text>
+                        />
                       </View>
                     )
                   })}
                 </View>
               </View>
-            </>
-              )}
+            )
+            : (
+              <>
+                <View style={styles.questionTextContainer}>
+                  <Text style={styles.questionSubmitted}>Question: </Text>
+                </View>
+                <Text style={styles.text}>{questions[index].questionMultiple.question}</Text>
+                <View style={styles.questionTextContainer}>
+                  <View style={styles.questionTextContainer}>
+                    <Text style={styles.answerSubmitted}>Answer: </Text>
+                  </View>
+                  <View style={styles.answerFormContainer}>
+                    {questions[index].questionMultiple.incorrect_answers.map((answer, i) => {
+                      return (
+                        <View
+                          key={i}
+                          style={
+                            answer === questions[index].questionMultiple.answer
+                              ? styles.formTextCorrectAnswer
+                              : styles.formText
+                          }
+                        >
+                          <Text
+                            style={styles.answerSubmittedText}
+                            onPress={() => {
+                              handleAnswerChange(answer, index)
+                            }}
+                          >
+                            {alphabet[i]}: {answer}
+                          </Text>
+                        </View>
+                      )
+                    })}
+                  </View>
+                </View>
+              </>
+            )}
         </View>
         <View style={styles.submitButtonContainer}>
           {questions[index].questionMultiple.incorrect_answers.length < 6 && !questions[index].isSubmitted && (
@@ -150,7 +150,8 @@ const styles = StyleSheet.create({
     marginTop: 10
   },
   addQuestionButton: {
-    bottom: 0
+    bottom: 0,
+    paddingTop: '5%'
   },
   questionText: {
     flex: 1,

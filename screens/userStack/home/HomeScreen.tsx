@@ -34,7 +34,7 @@ const HomeScreen: React.FC = ({ navigation }: RouterProps) => {
     dispatch(setCurrentQuiz(null))
   }, [])
 
-  async function fetchQuizzes (): Promise<void> {
+  async function fetchQuizzes(): Promise<void> {
     const fetchedQuizzes: Quiz[] = await fetchQuizzesToUser(user!.uid)
     dispatch(loadQuizzes(fetchedQuizzes))
     setQuizList(fetchedQuizzes)
@@ -115,21 +115,21 @@ const HomeScreen: React.FC = ({ navigation }: RouterProps) => {
       </View>
       {loading && displayQuizList.length === 0
         ? (
-        <View style={styles.activityContainer}>
-          <ActivityIndicator size={45} color={COLORS.cyan} />
-        </View>
-          )
+          <View style={styles.activityContainer}>
+            <ActivityIndicator size={45} color={COLORS.cyan} />
+          </View>
+        )
         : displayQuizList.length > 0
           ? (
-        <ScrollView style={styles.scrollView}>
-          <QuizList quizList={displayQuizList} onPress={handleQuizPress} onLongPress={handleLongPress} />
-        </ScrollView>
-            )
+            <ScrollView style={styles.scrollView}>
+              <QuizList quizList={displayQuizList} onPress={handleQuizPress} onLongPress={handleLongPress} />
+            </ScrollView>
+          )
           : (
-        <View style={styles.noContentContainer}>
-          <Text style={styles.noContentText}>{"You don't have any quizzes, create or download some!"}</Text>
-        </View>
-            )}
+            <View style={styles.noContentContainer}>
+              <Text style={styles.noContentText}>{"You don't have any quizzes, create or download some!"}</Text>
+            </View>
+          )}
       <View style={styles.plus}></View>
       <CancelEditDeleteModal
         onDismiss={() => setVisible(false)}
@@ -187,14 +187,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    height: '100%'
   },
   buttonContainer: {
     flex: 1,
     width: '100%',
     alignItems: 'flex-end',
-    justifyContent: 'flex-end',
-    maxHeight: 0
+    justifyContent: 'flex-end'
   },
   scrollView: {
     flex: 1,
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
   fabAction: {
     backgroundColor: 'pink',
     color: 'blue',
-    width: 40,
+    width: 10,
     paddingRight: 20
   }
 })

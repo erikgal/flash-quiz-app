@@ -16,8 +16,7 @@ const AddQuestionFormQuestions: React.FC<AddQuestionProps> = ({
   handleColorQuestionChange,
   handleColorFormChange,
   handleQuestionIsToggledChange,
-  questions,
-  questionFromParent
+  questions
 }: AddQuestionProps & RouterProps) => {
   const handleSubmit = (): void => {
     if (questions[index].isSubmitted) {
@@ -86,88 +85,88 @@ const AddQuestionFormQuestions: React.FC<AddQuestionProps> = ({
         <View style={styles.questionInputs}>
           {!questions[index].isSubmitted
             ? (
-            <View style={styles.questionInputs}>
-              {questions[index].questionIsToggled
-                ? (
-                <View>
-                  <TextInput
-                    label="Question"
-                    value={questions[index].questions.question}
-                    onChangeText={val => {
-                      handleQuestionChange(val, index)
-                    }}
-                  />
-                  <TextInput
-                    label="Answer"
-                    value={questions[index].questions.answer[0].join(' ')}
-                    editable={true}
-                    onChangeText={val => {
-                      handleAnswerChange(val, index)
-                    }}
-                  />
-                </View>
+              <View style={styles.questionInputs}>
+                {questions[index].questionIsToggled
+                  ? (
+                    <View>
+                      <TextInput
+                        label="Question"
+                        value={questions[index].questions.question}
+                        onChangeText={val => {
+                          handleQuestionChange(val, index)
+                        }}
+                      />
+                      <TextInput
+                        label="Answer"
+                        value={questions[index].questions.answer[0].join(' ')}
+                        editable={true}
+                        onChangeText={val => {
+                          handleAnswerChange(val, index)
+                        }}
+                      />
+                    </View>
                   )
-                : (
-                <TextInput
-                  editable={true}
-                  value={questions[index].questions.question}
-                  style={styles.questionInputs}
-                  label="Question"
-                  onChangeText={val => {
-                    handleQuestionChange(val, index)
-                  }}
-                />
+                  : (
+                    <TextInput
+                      editable={true}
+                      value={questions[index].questions.question}
+                      style={styles.questionInputs}
+                      label="Question"
+                      onChangeText={val => {
+                        handleQuestionChange(val, index)
+                      }}
+                    />
                   )}
-            </View>
-              )
+              </View>
+            )
             : (
-            <>
-              {questions[index].questionIsToggled
-                ? (
-                <>
-                  <View style={styles.questionTextContainer}>
-                    <Text style={styles.questionSubmitted}>Question: </Text>
-                  </View>
-                  <Text style={styles.text}>{questions[index].questions.question}</Text>
-                  <View style={styles.questionTextContainer}>
-                    <Text style={styles.answerSubmitted}>Answer: </Text>
-                  </View>
-                  <Text style={styles.text}>{questions[index].questions.answer[0].join(' ')}</Text>
-                </>
+              <>
+                {questions[index].questionIsToggled
+                  ? (
+                    <>
+                      <View style={styles.questionTextContainer}>
+                        <Text style={styles.questionSubmitted}>Question: </Text>
+                      </View>
+                      <Text style={styles.text}>{questions[index].questions.question}</Text>
+                      <View style={styles.questionTextContainer}>
+                        <Text style={styles.answerSubmitted}>Answer: </Text>
+                      </View>
+                      <Text style={styles.text}>{questions[index].questions.answer[0].join(' ')}</Text>
+                    </>
                   )
-                : (
-                <>
-                  <View style={styles.questionTextContainer}>
-                    <Text style={styles.questionSubmitted}>Question:</Text>
-                  </View>
-                  <View style={styles.answerFormContainer}>
-                    {questions[index].questions.question.split(' ').map((questionPart, i) => {
-                      return (
-                        <Text
-                          key={i}
-                          style={
-                            questionPart === questions[index].questions.answer.join(' ')
-                              ? styles.formTextCorrectAnswer
-                              : styles.formText
-                          }
-                          onPress={() => {
-                            handleSubmitChange(true, index)
-                            handleAnswerChange(questions[index].questions.question.split(' ')[i], index)
-                          }}
-                        >
-                          {questionPart}
-                        </Text>
-                      )
-                    })}
-                  </View>
-                  <View style={styles.questionTextContainer}>
-                    <Text style={styles.answerSubmitted}>Answer:</Text>
-                  </View>
-                  <Text style={styles.answerSubmittedForm}>{questions[index].questions.answer}</Text>
-                </>
+                  : (
+                    <>
+                      <View style={styles.questionTextContainer}>
+                        <Text style={styles.questionSubmitted}>Question:</Text>
+                      </View>
+                      <View style={styles.answerFormContainer}>
+                        {questions[index].questions.question.split(' ').map((questionPart, i) => {
+                          return (
+                            <Text
+                              key={i}
+                              style={
+                                questionPart === questions[index].questions.answer.join(' ')
+                                  ? styles.formTextCorrectAnswer
+                                  : styles.formText
+                              }
+                              onPress={() => {
+                                handleSubmitChange(true, index)
+                                handleAnswerChange(questions[index].questions.question.split(' ')[i], index)
+                              }}
+                            >
+                              {questionPart}
+                            </Text>
+                          )
+                        })}
+                      </View>
+                      <View style={styles.questionTextContainer}>
+                        <Text style={styles.answerSubmitted}>Answer:</Text>
+                      </View>
+                      <Text style={styles.answerSubmittedForm}>{questions[index].questions.answer}</Text>
+                    </>
                   )}
-            </>
-              )}
+              </>
+            )}
         </View>
         <View style={styles.submitButtonContainer}>
           <QuestionButton
@@ -237,7 +236,7 @@ const styles = StyleSheet.create({
     paddingRight: 5
   },
   formText: {
-    backgroundColor: COLORS.lightGrey,
+    backgroundColor: COLORS.grey,
     fontSize: 22,
     paddingRight: 5,
     margin: 2
@@ -266,7 +265,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   borderBox: {
-    backgroundColor: COLORS.grey,
+    backgroundColor: COLORS.lightGrey,
     borderRadius: 20,
     padding: 10,
     width: '100%',
