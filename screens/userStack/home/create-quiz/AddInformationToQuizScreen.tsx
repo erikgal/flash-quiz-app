@@ -61,6 +61,9 @@ const AddInformationToQuizScreen: React.FC = ({ navigation }: RouterProps) => {
   const handleSubmitChange = (input: boolean, i: number): void => {
     const list = [...questions]
     list[i].isSubmitted = input
+    if (list[i].questionIsToggled) {
+      list[i].questions.question = list[i].questions.question.concat(' xxx')
+    }
     setQuestions(list)
   }
 
@@ -92,6 +95,7 @@ const AddInformationToQuizScreen: React.FC = ({ navigation }: RouterProps) => {
   async function handleSubmitQuiz (): Promise<void> {
     if (questions.every(question => question.questions.answer.join(' ') !== '') && !isSubmitting) {
       const quizForms = questions.map(question => {
+        question.questions.question = question.questions.question.replace(question.questions.answer[0][0], 'xxx')
         return question.questions
       })
       setIsSubmitting(true)
@@ -107,6 +111,7 @@ const AddInformationToQuizScreen: React.FC = ({ navigation }: RouterProps) => {
         creatorName: user!.displayName!,
         type: QuizType.FormQuiz,
         downloads: 0,
+        raitings: {},
         path: `users/${user!.uid}/'formQuiz'`,
         questions: quizForms
       }

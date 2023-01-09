@@ -105,7 +105,7 @@ const AddQuestionFormQuestions: React.FC<AddQuestionProps> = ({
                         }}
                       />
                     </View>
-                  )
+                    )
                   : (
                     <TextInput
                       editable={true}
@@ -116,9 +116,9 @@ const AddQuestionFormQuestions: React.FC<AddQuestionProps> = ({
                         handleQuestionChange(val, index)
                       }}
                     />
-                  )}
+                    )}
               </View>
-            )
+              )
             : (
               <>
                 {questions[index].questionIsToggled
@@ -127,13 +127,13 @@ const AddQuestionFormQuestions: React.FC<AddQuestionProps> = ({
                       <View style={styles.questionTextContainer}>
                         <Text style={styles.questionSubmitted}>Question: </Text>
                       </View>
-                      <Text style={styles.text}>{questions[index].questions.question}</Text>
+                      <Text style={styles.text}>{questions[index].questions.question.split(' ').filter(word => word !== 'xxx').join(' ')}</Text>
                       <View style={styles.questionTextContainer}>
                         <Text style={styles.answerSubmitted}>Answer: </Text>
                       </View>
                       <Text style={styles.text}>{questions[index].questions.answer[0].join(' ')}</Text>
                     </>
-                  )
+                    )
                   : (
                     <>
                       <View style={styles.questionTextContainer}>
@@ -164,9 +164,9 @@ const AddQuestionFormQuestions: React.FC<AddQuestionProps> = ({
                       </View>
                       <Text style={styles.answerSubmittedForm}>{questions[index].questions.answer}</Text>
                     </>
-                  )}
+                    )}
               </>
-            )}
+              )}
         </View>
         <View style={styles.submitButtonContainer}>
           <QuestionButton

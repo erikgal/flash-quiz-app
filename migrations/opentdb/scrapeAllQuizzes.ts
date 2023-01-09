@@ -72,7 +72,7 @@ export default async function scrapeAllQuizzes (): Promise<void> {
         creatorId: 'https://opentdb.com/',
         creatorName: 'Open Trivia Database',
         downloads: 0,
-        raitings: [],
+        raitings: {},
         type: QuizType.MultipleChoiceQuiz,
         questions: questionsSortByDiff[key].map(thisQuestion => {
           return {

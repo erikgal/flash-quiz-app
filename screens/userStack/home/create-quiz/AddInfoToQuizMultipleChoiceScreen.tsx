@@ -79,6 +79,10 @@ const AddInfoToQuizMultipleChoiceScreen: React.FC = ({ navigation }: RouterProps
   async function handleSubmitQuiz (): Promise<void> {
     if (questions.every(question => question.questionMultiple.answer !== '') && !isSubmitting) {
       const quizMultiple = questions.map(question => {
+        const incorrectAnswers = [...question.questionMultiple.incorrect_answers]
+        question.questionMultiple.incorrect_answers = incorrectAnswers.filter(
+          incorrectAnswer => incorrectAnswer !== question.questionMultiple.answer
+        )
         return question.questionMultiple
       })
       setIsSubmitting(true)
@@ -94,6 +98,7 @@ const AddInfoToQuizMultipleChoiceScreen: React.FC = ({ navigation }: RouterProps
         creatorName: user!.displayName!,
         type: QuizType.MultipleChoiceQuiz,
         downloads: 0,
+        raitings: {},
         path: `users/${user!.uid}/'multipleChoiceQuiz'`,
         questions: quizMultiple
       }
