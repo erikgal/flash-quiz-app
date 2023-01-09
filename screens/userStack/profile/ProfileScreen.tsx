@@ -24,7 +24,7 @@ const ProfileScreen: React.FC = () => {
   const [rating, setRating] = useState<number>()
   const [numberOfQuizzesMade, setNumberOfQuizzesMade] = useState<number>()
 
-  async function filterUploadedQuizzes(userQuizzes: Quiz[]): Promise<Quiz[]> {
+  async function filterUploadedQuizzes (userQuizzes: Quiz[]): Promise<Quiz[]> {
     const storeQuizIds: string[] = []
     const querySnapshot = await getDocs(collection(db, 'store/userCreated/formQuiz'))
     querySnapshot.forEach(docx => {
@@ -33,7 +33,7 @@ const ProfileScreen: React.FC = () => {
     return userQuizzes.filter(userQuiz => !storeQuizIds.includes(userQuiz.id))
   }
 
-  async function fetchQuizzes(): Promise<void> {
+  async function fetchQuizzes (): Promise<void> {
     const fetchedQuizzes: Quiz[] = []
     const formSnapshot = await getDocs(collection(db, `users/${user!.uid}/formQuiz`))
     console.log(formSnapshot)
@@ -49,7 +49,7 @@ const ProfileScreen: React.FC = () => {
     console.log(quizList)
   }
 
-  function mean(array: number[]): string {
+  function mean (array: number[]): string {
     return (array.reduce((a, b) => a + b, 0) / array.length).toFixed(1)
   }
 

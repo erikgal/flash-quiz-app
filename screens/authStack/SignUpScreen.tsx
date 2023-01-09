@@ -7,6 +7,7 @@ import SignUp from '../../components/buttons/SignUpButton'
 import { COLORS } from '../../assets/colors'
 import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
 import wrapAsyncFunction from '../../utils/functions/wrapAsyncFunction'
+import { emailReg } from '../../utils/consts/emailReg'
 
 const SignUpScreen: React.FC = ({ navigation }: RouterProps) => {
   const [name, setName] = useState<string>('')
@@ -22,8 +23,7 @@ const SignUpScreen: React.FC = ({ navigation }: RouterProps) => {
 
   const handleEmailChange = (val): void => {
     setEmail(val)
-    const reg = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w\w+)+$/
-    setValidEmail(reg.test(val))
+    setValidEmail(emailReg.test(val))
   }
 
   const handlePasswordChange = (val): void => {

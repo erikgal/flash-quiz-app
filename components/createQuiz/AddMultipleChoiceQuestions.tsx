@@ -64,7 +64,7 @@ const AddMultipleChoiceQuestions: React.FC<AddMultipleChoiceProps> = ({
                   })}
                 </View>
               </View>
-            )
+              )
             : (
               <>
                 <View style={styles.questionTextContainer}>
@@ -100,7 +100,7 @@ const AddMultipleChoiceQuestions: React.FC<AddMultipleChoiceProps> = ({
                   </View>
                 </View>
               </>
-            )}
+              )}
         </View>
         <View style={styles.submitButtonContainer}>
           {questions[index].questionMultiple.incorrect_answers.length < 6 && !questions[index].isSubmitted && (
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   borderBox: {
-    backgroundColor: COLORS.grey,
+    backgroundColor: COLORS.lightGrey,
     borderRadius: 20,
     padding: 10,
     width: '98%',

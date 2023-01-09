@@ -4,7 +4,7 @@ import { View, ActivityIndicator, StyleSheet, FlatList, Text } from 'react-nativ
 import { List, Searchbar } from 'react-native-paper'
 import { useDispatch } from 'react-redux'
 import { COLORS } from '../../../assets/colors'
-import UploadButton from '../../../components/buttons/UploadButtonButton'
+import UploadButton from '../../../components/buttons/UploadButton'
 import { db } from '../../../firebaseConfig'
 import { FirestoreQuizForm, FirestoreQuizMultiple, Quiz, RouterProps } from '../../../types'
 import quizFormFromFirestore from '../../../utils/functions/format-quiz/quizFormFromFirestore'

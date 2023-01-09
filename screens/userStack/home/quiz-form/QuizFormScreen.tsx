@@ -5,30 +5,8 @@ import RoundButton from '../../../../components/buttons/RoundButton'
 import { RootState } from '../../../../store'
 import { saveUserFormAnswers } from '../../../../utils/redux/quizSlice'
 
-import { QuestionForm, RouterProps, InputMap, QuizForm } from '../../../../types'
-
-function getNumberOfChars (index: number, question: QuestionForm): number {
-  const inputIndexArray: number[] = []
-  question.question.split(' ').forEach((word, i) => {
-    if (word.includes('xxx')) {
-      inputIndexArray.push(i)
-    }
-  })
-
-  let inputNumber: number | null = null
-  inputIndexArray.forEach((inputIndex, i) => {
-    if (inputIndex === index) {
-      inputNumber = i
-    }
-  })
-
-  if (inputNumber != null) {
-    const answer = question.answer[inputNumber].reduce((a, b) => (a.length > b.length ? a : b), '')
-    return answer.length
-  }
-  console.log('ERROR: The answer corresponding to the input was not found')
-  return 0
-}
+import { RouterProps, InputMap, QuizForm } from '../../../../types'
+import { getNumberOfChars } from '../../../../utils/functions/getNumberOfChars'
 
 const QuizWriteScreen: React.FC = ({ navigation }: RouterProps) => {
   const [questionIndex, setQuestionIndex] = useState<number>(0)
