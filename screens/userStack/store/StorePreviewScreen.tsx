@@ -74,7 +74,7 @@ const StorePreviewScreen: React.FC = ({ navigation }: RouterProps) => {
     if (docSnap.exists() && user != null) {
       await setDoc(doc(db, `${quiz!.path!}`, quiz!.id), {
         ...docSnap.data(),
-        raitings: { ...docSnap.data().raiting, [user.uid]: raiting }
+        raitings: { ...docSnap.data().raitings, [user.uid]: raiting }
       })
       setRaitingVisible(true)
     } else {
